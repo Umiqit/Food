@@ -1,4 +1,4 @@
-﻿using FoodServiceOccupancyForecast.Core.Enums;
+using FoodServiceOccupancyForecast.Core.Enums;
 
 namespace FoodServiceOccupancyForecast.Core.Entities;
 
@@ -6,14 +6,19 @@ public class Booking
 {
     public int Id { get; set; }
     public int TableId { get; set; }
+    public Table Table { get; set; } = null!;
     public string CustomerName { get; set; } = string.Empty;
-    public string Phone { get; set; } = string.Empty;
-    public DateTime BookingTime { get; set; }
+    public string? CustomerPhone { get; set; }
+    public string? Phone { get; set; }
+    public string? CustomerEmail { get; set; }
+    public int GuestsCount { get; set; }
     public int PersonsCount { get; set; }
+    public DateTime BookingDate { get; set; }
+    public DateTime? BookingTime { get; set; }
+    public TimeSpan StartTime { get; set; }
+    public TimeSpan EndTime { get; set; }
     public BookingStatus Status { get; set; } = BookingStatus.Pending;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string? Notes { get; set; }
-
-    // Навигационное свойство
-    public Table? Table { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? ConfirmedAt { get; set; }
 }

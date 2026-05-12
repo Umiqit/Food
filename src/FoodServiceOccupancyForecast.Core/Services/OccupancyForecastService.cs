@@ -3,12 +3,12 @@ using FoodServiceOccupancyForecast.Core.Interfaces;
 
 namespace FoodServiceOccupancyForecast.Core.Services;
 
-public class OccupancyService : IOccupancyService
+public class OccupancyForecastService : IOccupancyService
 {
     private readonly ITableRepository _tableRepo;
     private readonly IBookingRepository _bookingRepo;
 
-    public OccupancyService(ITableRepository tableRepo, IBookingRepository bookingRepo)
+    public OccupancyForecastService(ITableRepository tableRepo, IBookingRepository bookingRepo)
     {
         _tableRepo = tableRepo;
         _bookingRepo = bookingRepo;

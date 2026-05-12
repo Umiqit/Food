@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] — Админка Гулиновъ</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/floor-plan.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <h2>Гулиновъ</h2>
+                <span>Администрирование</span>
+            </div>
+            <nav class="admin-nav">
+                <a href="/Admin/Dashboard" class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Dashboard") == true ? "active" : "")">
+                    📊 Dashboard
+                </a>
+                <a href="/Admin/Tables" class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Tables") == true ? "active" : "")">
+                    🪑 Столы
+                </a>
+                <a href="/Admin/Bookings" class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Bookings") == true ? "active" : "")">
+                    📅 Бронирования
+                </a>
+                <a href="/Admin/Reports" class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Reports") == true ? "active" : "")">
+                    📈 Отчёты
+                </a>
+                <a href="/" class="nav-link">🏠 На сайт</a>
+            </nav>
+            <div class="admin-user">
+                <span>👤 Admin</span>
+                <a href="/Account/Logout">Выйти</a>
+            </div>
+        </aside>
+        <main class="admin-main">
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/js/signalr-client.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

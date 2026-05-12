@@ -1,0 +1,126 @@
+@page
+@model FoodServiceOccupancyForecast.Web.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<div class="dashboard-header">
+    <h1>📊 Dashboard</h1>
+    <div class="live-indicator">
+        <span class="pulse"></span> Live
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">🪑</div>
+        <div class="stat-value" id="occupied-tables">@Model.OccupiedTables</div>
+        <div class="stat-label">Занято столов</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">👤</div>
+        <div class="stat-value" id="total-guests">@Model.TotalGuests</div>
+        <div class="stat-label">Гостей сейчас</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value" id="reserved-tables" style="color: #8b5cf6;">@Model.ReservedTables</div>
+        <div class="stat-label">Забронировано</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-value" id="load-percentage">@Model.LoadPercentage%</div>
+        <div class="stat-label">Загрузка</div>
+    </div>
+</div>
+
+<div class="charts-row">
+    <div class="chart-card">
+        <h3>Загрузка по часам (сегодня)</h3>
+        <canvas id="hourlyChart"></canvas>
+    </div>
+    <div class="chart-card">
+        <h3>Загрузка по дням недели</h3>
+        <canvas id="weeklyChart"></canvas>
+    </div>
+</div>
+
+<div class="recent-bookings">
+    <h3>🕐 Последние бронирования</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Стол</th>
+                <th>Клиент</th>
+                <th>Дата</th>
+                <th>Время</th>
+                <th>Гостей</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody id="recent-bookings-body">
+            @foreach (var booking in Model.RecentBookings)
+            {
+                <tr>
+                    <td>Стол @booking.TableId</td>
+                    <td>@booking.CustomerName</td>
+                    <td>@booking.BookingDate.ToString("dd.MM.yyyy")</td>
+                    <td>@booking.StartTime.ToString("hh\\:mm") - @booking.EndTime.ToString("hh\\:mm")</td>
+                    <td>@booking.GuestsCount</td>
+                    <td><span class="status-badge status-@booking.Status.ToString().ToLower()">@booking.Status</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+        const hourlyChart = new Chart(hourlyCtx, {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.HourlyLabels)),
+                datasets: [{
+                    label: 'Загрузка %',
+                    data: @Html.Raw(Json.Serialize(Model.HourlyData)),
+                    borderColor: '#c9a96e',
+                    backgroundColor: 'rgba(201, 169, 110, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, max: 100, ticks: { color: '#aaa' }, grid: { color: '#444' } },
+                    x: { ticks: { color: '#aaa' }, grid: { color: '#444' } }
+                }
+            }
+        });
+
+        const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+        const weeklyChart = new Chart(weeklyCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.WeeklyLabels)),
+                datasets: [{
+                    label: 'Средняя загрузка %',
+                    data: @Html.Raw(Json.Serialize(Model.WeeklyData)),
+                    backgroundColor: '#87ceeb',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, max: 100, ticks: { color: '#aaa' }, grid: { color: '#444' } },
+                    x: { ticks: { color: '#aaa' }, grid: { display: false } }
+                }
+            }
+        });
+    </script>
+}

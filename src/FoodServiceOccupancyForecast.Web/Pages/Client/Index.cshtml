@@ -1,0 +1,127 @@
+@page
+@model FoodServiceOccupancyForecast.Web.Pages.Client.IndexModel
+@{
+    ViewData["Title"] = "Бронирование столов";
+    Layout = "_Layout";
+}
+
+<div class="client-container">
+    <div class="client-header">
+        <h1>🏠 Ресторан Гулиновъ</h1>
+        <p>Забронируйте стол онлайн</p>
+    </div>
+
+    <div class="booking-form-container">
+        <form id="client-booking-form" class="booking-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Имя</label>
+                    <input type="text" id="client-name" required placeholder="Ваше имя" />
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="tel" id="client-phone" required placeholder="+7 (___) ___-__-__" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Дата</label>
+                    <input type="date" id="client-date" required />
+                </div>
+                <div class="form-group">
+                    <label>Время</label>
+                    <input type="time" id="client-time" required />
+                </div>
+                <div class="form-group">
+                    <label>Гостей</label>
+                    <input type="number" id="client-guests" min="1" max="20" value="2" required />
+                </div>
+            </div>
+            <button type="submit" class="btn-primary btn-large">Найти свободные столы</button>
+        </form>
+    </div>
+
+    <div class="floor-plan-view" id="client-floor-plan">
+        <h2>План зала</h2>
+        <div class="plan-container" id="client-plan">
+            @foreach (var table in Model.Tables)
+            {
+                <div class="client-table table-@table.Shape table-@table.Status.ToString().ToLower()"
+                     data-id="@table.Id"
+                     data-seats="@table.Seats"
+                     data-status="@table.Status"
+                     style="left: @(table.PositionX)px; top: @(table.PositionY)px;">
+                    <span class="table-number">@table.Id</span>
+                    <span class="table-seats">@table.Seats мест</span>
+                </div>
+            }
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background: #8b5cf6;"></div><span>Забронирован</span></div>
+            <div class="legend-item"><div class="legend-color" style="background: #dc2626;"></div><span>Занят</span></div>
+            <div class="legend-item"><div class="legend-color" style="background: #16a34a;"></div><span>Свободен</span></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('client-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('client-time').value = '19:00';
+
+        document.getElementById('client-booking-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const date = document.getElementById('client-date').value;
+            const time = document.getElementById('client-time').value;
+            const guests = document.getElementById('client-guests').value;
+
+            // Show available tables
+            const response = await fetch(`/api/tables/available?date=${date}&start=${time}:00&end=${parseInt(time.split(':')[0])+2}:00:00`);
+            const tables = await response.json();
+
+            document.querySelectorAll('.client-table').forEach(t => {
+                const isAvailable = tables.some(at => at.id == t.dataset.id);
+                t.style.opacity = isAvailable ? '1' : '0.3';
+                t.style.pointerEvents = isAvailable ? 'auto' : 'none';
+            });
+        });
+
+        // Table selection
+        document.querySelectorAll('.client-table').forEach(table => {
+            table.addEventListener('click', () => {
+                if (table.dataset.status === 'Free') {
+                    const tableId = table.dataset.id;
+                    const name = document.getElementById('client-name').value;
+                    const phone = document.getElementById('client-phone').value;
+                    const date = document.getElementById('client-date').value;
+                    const time = document.getElementById('client-time').value;
+                    const guests = document.getElementById('client-guests').value;
+
+                    if (!name || !phone) {
+                        alert('Пожалуйста, заполните имя и телефон');
+                        return;
+                    }
+
+                    const data = {
+                        tableId: parseInt(tableId),
+                        customerName: name,
+                        customerPhone: phone,
+                        guestsCount: parseInt(guests),
+                        bookingDate: date,
+                        startTime: time,
+                        endTime: `${parseInt(time.split(':')[0])+2}:00`
+                    };
+
+                    fetch('/api/bookings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    }).then(() => {
+                        alert('Стол забронирован!');
+                        location.reload();
+                    });
+                }
+            });
+        });
+    </script>
+}

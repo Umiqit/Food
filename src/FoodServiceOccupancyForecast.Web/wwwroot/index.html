@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гулиновъ — Мониторинг столов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2a2a2a;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: #3a3a3a;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-right: 1px solid #4a4a4a;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 300;
+            color: #c9a96e;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            font-style: italic;
+        }
+
+        .logo span {
+            display: block;
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 4px;
+            font-style: normal;
+            margin-top: -5px;
+        }
+
+        .nav-btn {
+            background: #87ceeb;
+            color: #2a2a2a;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn:hover {
+            background: #a8ddf5;
+            transform: translateX(5px);
+        }
+
+        .nav-btn.active {
+            background: #5fb8d4;
+        }
+
+        .load-indicator {
+            margin-top: auto;
+            padding: 15px 0;
+            border-top: 1px solid #4a4a4a;
+        }
+
+        .load-indicator label {
+            font-size: 12px;
+            color: #aaa;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .load-value {
+            font-size: 28px;
+            color: #c9a96e;
+            font-weight: bold;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== HEADER STATS ===== */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 15px 30px;
+            background: #333;
+            border-bottom: 1px solid #4a4a4a;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+        }
+
+        .stat-icon {
+            font-size: 22px;
+        }
+
+        .stat-value {
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* ===== FLOOR PLAN ===== */
+        .floor-plan {
+            flex: 1;
+            position: relative;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .plan-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 700px;
+        }
+
+        /* Rooms */
+        .room {
+            position: absolute;
+            background: #4a4a4a;
+            border: 2px solid #5a5a5a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .room-kitchen { 
+            top: 180px; left: 380px; 
+            width: 200px; height: 280px; 
+            background: #555;
+            flex-direction: column;
+        }
+        .room-kitchen .kitchen-counter {
+            width: 40px;
+            height: 180px;
+            background: #8b4513;
+            border-radius: 4px;
+            margin: 10px auto;
+        }
+
+        .room-wc-1 { 
+            top: 100px; left: 380px; 
+            width: 120px; height: 70px; 
+        }
+        .room-wc-2 { 
+            top: 380px; left: 100px; 
+            width: 120px; height: 70px; 
+        }
+        .room-wc-3 { 
+            top: 100px; left: 850px; 
+            width: 120px; height: 80px; 
+        }
+        .room-wc-4 { 
+            top: 480px; left: 280px; 
+            width: 120px; height: 70px; 
+        }
+
+        .room-exit { 
+            top: 320px; left: 100px; 
+            width: 80px; height: 120px; 
+        }
+        .room-dishwash { 
+            top: 320px; left: 200px; 
+            width: 100px; height: 120px; 
+        }
+        .room-passage { 
+            top: 450px; left: 100px; 
+            width: 480px; height: 50px; 
+            background: transparent;
+            border: 1px dashed #666;
+        }
+        .room-wardrobe-1 { 
+            top: 60px; left: 850px; 
+            width: 180px; height: 140px; 
+        }
+        .room-wardrobe-2 { 
+            top: 580px; left: 100px; 
+            width: 140px; height: 200px; 
+        }
+        .room-kids { 
+            top: 480px; left: 420px; 
+            width: 120px; height: 70px; 
+        }
+        .room-fireplace { 
+            top: 60px; left: 580px; 
+            width: 100px; height: 40px; 
+            background: #555;
+        }
+
+        /* Bar area */
+        .bar-area {
+            position: absolute;
+            top: 580px;
+            left: 200px;
+            width: 340px;
+            height: 200px;
+            background: #4a4a4a;
+            border: 2px solid #5a5a5a;
+        }
+        .bar-counter {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 60px;
+            background: #8b6914;
+            border-radius: 0 0 90px 90px;
+            border: 3px solid #6b5010;
+        }
+        .bar-stools {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+        }
+        .bar-stool {
+            width: 30px;
+            height: 30px;
+            background: #666;
+            border-radius: 4px;
+            border: 1px solid #888;
+        }
+
+        /* Round hall */
+        .round-hall {
+            position: absolute;
+            top: 520px;
+            left: 620px;
+            width: 380px;
+            height: 380px;
+            background: #4a4a4a;
+            border: 2px solid #5a5a5a;
+            border-radius: 50%;
+        }
+
+        /* Aquarium */
+        .aquarium {
+            position: absolute;
+            top: 520px;
+            left: 620px;
+            width: 200px;
+            height: 100px;
+            background: linear-gradient(180deg, #4a90a4 0%, #2c5f6f 100%);
+            border: 3px solid #87ceeb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #a8ddf5;
+        }
+
+        /* Piano */
+        .piano {
+            position: absolute;
+            top: 420px;
+            left: 680px;
+            width: 60px;
+            height: 40px;
+            background: #333;
+            border: 2px solid #555;
+            border-radius: 4px;
+            transform: rotate(-15deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #888;
+        }
+
+        /* Tables */
+        .table {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .table:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+            z-index: 10;
+        }
+
+        /* Table shapes */
+        .table-rect {
+            width: 70px;
+            height: 50px;
+            border-radius: 4px;
+        }
+        .table-round {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+        }
+        .table-square {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            transform: rotate(45deg);
+        }
+        .table-square span {
+            transform: rotate(-45deg);
+            display: block;
+        }
+
+        /* Table statuses */
+        .table-reserved { 
+            background: #8b5cf6; 
+            color: #fff; 
+        }
+        .table-occupied { 
+            background: #dc2626; 
+            color: #fff; 
+        }
+        .table-free { 
+            background: #16a34a; 
+            color: #fff; 
+        }
+
+        /* Chairs around tables */
+        .chairs {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .chair {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #d4c5a3;
+            border: 1px solid #b8a88a;
+            border-radius: 2px;
+        }
+        .chair-top { top: -10px; left: 50%; transform: translateX(-50%); }
+        .chair-bottom { bottom: -10px; left: 50%; transform: translateX(-50%); }
+        .chair-left { left: -10px; top: 50%; transform: translateY(-50%); }
+        .chair-right { right: -10px; top: 50%; transform: translateY(-50%); }
+
+        /* Specific table positions */
+        .t1 { top: 80px; left: 580px; }
+        .t2 { top: 120px; left: 650px; }
+        .t3 { top: 80px; left: 760px; }
+        .t4 { top: 180px; left: 620px; }
+        .t5 { top: 220px; left: 520px; }
+        .t6 { top: 300px; left: 580px; }
+        .t7 { top: 300px; left: 660px; }
+        .t8 { top: 220px; left: 780px; }
+        .t9 { top: 360px; left: 520px; }
+        .t10 { top: 420px; left: 600px; }
+        .t11 { top: 360px; left: 760px; }
+        .t12 { top: 620px; left: 580px; }
+        .t13 { top: 600px; left: 650px; }
+        .t14 { top: 600px; left: 720px; }
+        .t15 { top: 620px; left: 820px; }
+        .t16 { top: 720px; left: 620px; }
+        .t17 { top: 740px; left: 720px; }
+        .t18 { top: 680px; left: 820px; }
+        .t19 { top: 480px; left: 900px; }
+        .t20 { top: 540px; left: 950px; }
+        .t21 { top: 600px; left: 920px; }
+
+        /* Legend */
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 100;
+            white-space: nowrap;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #3a3a3a;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            color: #fff;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #c9a96e;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #aaa;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #87ceeb;
+            color: #2a2a2a;
+        }
+
+        .btn-primary:hover {
+            background: #a8ddf5;
+        }
+
+        .btn-secondary {
+            background: #555;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar { width: 180px; }
+            .plan-container { transform: scale(0.8); transform-origin: top left; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                Гулиновъ
+                <span>Ресторан</span>
+            </div>
+            <button class="nav-btn active">🧭 Навигация</button>
+            <button class="nav-btn">👥 Персонал</button>
+            <button class="nav-btn">📊 Аналитика</button>
+            <button class="nav-btn">📅 Бронирования</button>
+            <button class="nav-btn">ℹ️ Информация о заведении</button>
+
+            <div class="load-indicator">
+                <label>Текущая нагрузка:</label>
+                <div class="load-value" id="loadValue">0%</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Stats Bar -->
+            <header class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-icon">🪑</span>
+                    <span>Занято <span class="stat-value" id="occupiedCount">0</span> из <span id="totalCount">21</span> столов</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">👤</span>
+                    <span>Количество гостей: <span class="stat-value" id="guestCount">0</span></span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">📅</span>
+                    <span>Забронировано <span class="stat-value" style="color: #8b5cf6;" id="reservedCount">0</span> столов</span>
+                </div>
+            </header>
+
+            <!-- Floor Plan -->
+            <div class="floor-plan">
+                <div class="plan-container">
+                    <!-- Rooms -->
+                    <div class="room room-kitchen">
+                        Кухня
+                        <div class="kitchen-counter"></div>
+                    </div>
+                    <div class="room room-wc-1">Уборная и лестница</div>
+                    <div class="room room-wc-2">WC</div>
+                    <div class="room room-wc-3">WC</div>
+                    <div class="room room-wc-4">WC</div>
+                    <div class="room room-exit">Выход</div>
+                    <div class="room room-dishwash">Посуду мыть</div>
+                    <div class="room room-passage">Проход 2</div>
+                    <div class="room room-wardrobe-1">Гардероб</div>
+                    <div class="room room-wardrobe-2">Гардероб</div>
+                    <div class="room room-kids">Детская</div>
+                    <div class="room room-fireplace">Камин</div>
+
+                    <!-- Bar -->
+                    <div class="bar-area">
+                        <div class="bar-counter"></div>
+                        <div class="bar-stools">
+                            <div class="bar-stool"></div>
+                            <div class="bar-stool"></div>
+                            <div class="bar-stool"></div>
+                        </div>
+                    </div>
+
+                    <!-- Round Hall -->
+                    <div class="round-hall"></div>
+                    <div class="aquarium">🐠 Аквариум</div>
+                    <div class="piano">🎹 Рояль</div>
+
+                    <!-- Tables -->
+                    <!-- Main Hall Tables -->
+                    <div class="table table-rect table-reserved t1" data-id="1">
+                        1
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-square table-free t2" data-id="2">
+                        <span>2</span>
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-right"></div>
+                            <div class="chair chair-bottom"></div>
+                            <div class="chair chair-left"></div>
+                        </div>
+                    </div>
+                    <div class="table table-rect table-free t3" data-id="3">
+                        3
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-rect table-free t4" data-id="4">
+                        4
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-square table-free t5" data-id="5">
+                        <span>5</span>
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-right"></div>
+                            <div class="chair chair-bottom"></div>
+                            <div class="chair chair-left"></div>
+                        </div>
+                    </div>
+                    <div class="table table-rect table-occupied t6" data-id="6">
+                        6
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-rect table-free t7" data-id="7">
+                        7
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-rect table-reserved t8" data-id="8">
+                        8
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-square table-occupied t9" data-id="9">
+                        <span>9</span>
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-right"></div>
+                            <div class="chair chair-bottom"></div>
+                            <div class="chair chair-left"></div>
+                        </div>
+                    </div>
+                    <div class="table table-rect table-free t10" data-id="10">
+                        10
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-rect table-occupied t11" data-id="11">
+                        11
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+
+                    <!-- Round Hall Tables -->
+                    <div class="table table-rect table-free t12" data-id="12">
+                        12
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-round table-free t13" data-id="13">
+                        13
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-right"></div>
+                            <div class="chair chair-bottom"></div>
+                            <div class="chair chair-left"></div>
+                        </div>
+                    </div>
+                    <div class="table table-round table-free t14" data-id="14">
+                        14
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-right"></div>
+                            <div class="chair chair-bottom"></div>
+                            <div class="chair chair-left"></div>
+                        </div>
+                    </div>
+                    <div class="table table-rect table-occupied t15" data-id="15">
+                        15
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-square table-occupied t16" data-id="16">
+                        <span>16</span>
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-right"></div>
+                            <div class="chair chair-bottom"></div>
+                            <div class="chair chair-left"></div>
+                        </div>
+                    </div>
+                    <div class="table table-rect table-reserved t17" data-id="17">
+                        17
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-square table-occupied t18" data-id="18">
+                        <span>18</span>
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-right"></div>
+                            <div class="chair chair-bottom"></div>
+                            <div class="chair chair-left"></div>
+                        </div>
+                    </div>
+
+                    <!-- Side Room Tables -->
+                    <div class="table table-square table-occupied t19" data-id="19">
+                        <span>19</span>
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-right"></div>
+                            <div class="chair chair-bottom"></div>
+                            <div class="chair chair-left"></div>
+                        </div>
+                    </div>
+                    <div class="table table-rect table-free t20" data-id="20">
+                        20
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="table table-round table-free t21" data-id="21">
+                        21
+                        <div class="chairs">
+                            <div class="chair chair-top"></div>
+                            <div class="chair chair-right"></div>
+                            <div class="chair chair-bottom"></div>
+                            <div class="chair chair-left"></div>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #8b5cf6;"></div>
+                            <span>Стол забронирован</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #dc2626;"></div>
+                            <span>Стол занят</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #16a34a;"></div>
+                            <span>Стол свободен</span>
+                        </div>
+                    </div>
+
+                    <!-- Tooltip -->
+                    <div class="tooltip" id="tooltip"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal-content">
+            <div class="modal-header">Бронирование стола</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Номер стола: <span id="tableNumber">-</span></label>
+                </div>
+                <div class="form-group">
+                    <label for="guestName">Имя гостя *</label>
+                    <input type="text" id="guestName" placeholder="Иван Петров">
+                </div>
+                <div class="form-group">
+                    <label for="guestPhone">Телефон *</label>
+                    <input type="tel" id="guestPhone" placeholder="+7 (999) 123-45-67">
+                </div>
+                <div class="form-group">
+                    <label for="guestCount">Количество гостей *</label>
+                    <input type="number" id="guestCount" min="1" max="10" value="2">
+                </div>
+                <div class="form-group">
+                    <label for="bookingTime">Время бронирования *</label>
+                    <input type="time" id="bookingTime">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeBookingModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="submitBooking()">Забронировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SignalR and API scripts -->
+    <script src="/lib/signalr/signalr.min.js"></script>
+    <script>
+        const API_BASE = '/api';
+        let currentTableId = null;
+        const tooltip = document.getElementById('tooltip');
+        const tables = document.querySelectorAll('.table');
+
+        // ===== SIGNALR CONNECTION =====
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/occupancy")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("OccupancyUpdated", (data) => {
+            console.log('Occupancy updated:', data);
+            updateStats(data);
+        });
+
+        connection.on("TableStatusChanged", (tableId, newStatus) => {
+            console.log('Table status changed:', tableId, newStatus);
+            updateTableStatus(tableId, newStatus);
+        });
+
+        connection.start().catch(err => console.error('SignalR connection failed:', err));
+
+        // ===== LOAD INITIAL DATA =====
+        async function loadOccupancyData() {
+            try {
+                const response = await fetch(`${API_BASE}/occupancy/current`);
+                if (!response.ok) throw new Error('Failed to load occupancy data');
+                const data = await response.json();
+                updateStats(data);
+            } catch (error) {
+                console.error('Error loading occupancy:', error);
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('occupiedCount').textContent = data.occupiedTables || 0;
+            document.getElementById('guestCount').textContent = data.totalGuests || 0;
+            document.getElementById('reservedCount').textContent = data.reservedTables || 0;
+            document.getElementById('loadValue').textContent = Math.round(data.occupancyPercent || 0) + '%';
+        }
+
+        // ===== TABLE INTERACTIONS =====
+        tables.forEach(table => {
+            table.addEventListener('mouseenter', (e) => {
+                const id = table.dataset.id;
+                tooltip.innerHTML = `
+                    <strong>Стол ${id}</strong><br>
+                    Статус: ${getTableStatus(table)}<br>
+                `;
+                tooltip.style.opacity = '1';
+            });
+
+            table.addEventListener('mousemove', (e) => {
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY - 10) + 'px';
+            });
+
+            table.addEventListener('mouseleave', () => {
+                tooltip.style.opacity = '0';
+            });
+
+            table.addEventListener('click', () => {
+                const id = table.dataset.id;
+                if (table.classList.contains('table-free')) {
+                    openBookingModal(id);
+                }
+            });
+        });
+
+        function getTableStatus(table) {
+            if (table.classList.contains('table-occupied')) return 'Занят';
+            if (table.classList.contains('table-reserved')) return 'Забронирован';
+            return 'Свободен';
+        }
+
+        // ===== BOOKING MODAL =====
+        function openBookingModal(tableId) {
+            currentTableId = tableId;
+            document.getElementById('tableNumber').textContent = tableId;
+            document.getElementById('bookingModal').classList.add('active');
+            setTimeToNow();
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+            currentTableId = null;
+        }
+
+        async function submitBooking() {
+            const name = document.getElementById('guestName').value;
+            const phone = document.getElementById('guestPhone').value;
+            const guestCount = document.getElementById('guestCount').value;
+            const time = document.getElementById('bookingTime').value;
+
+            if (!name || !phone || !time) {
+                alert('Заполните все поля');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/bookings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tableId: currentTableId,
+                        guestName: name,
+                        guestPhone: phone,
+                        guestCount: parseInt(guestCount),
+                        bookingTime: time,
+                        createdAt: new Date().toISOString()
+                    })
+                });
+
+                if (!response.ok) throw new Error('Booking failed');
+
+                alert('Стол забронирован!');
+                closeBookingModal();
+                loadOccupancyData();
+            } catch (error) {
+                alert('Ошибка при бронировании: ' + error.message);
+            }
+        }
+
+        function setTimeToNow() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('bookingTime').value = `${hours}:${minutes}`;
+        }
+
+        function updateTableStatus(tableId, newStatus) {
+            const table = document.querySelector(`[data-id="${tableId}"]`);
+            if (!table) return;
+
+            table.classList.remove('table-free', 'table-occupied', 'table-reserved');
+            table.classList.add(`table-${newStatus.toLowerCase()}`);
+        }
+
+        // ===== INITIALIZE =====
+        loadOccupancyData();
+    </script>
+</body>
+</html>

@@ -1,10 +1,11 @@
-﻿using FoodServiceOccupancyForecast.Core.Entities;
+using FoodServiceOccupancyForecast.Core.Entities;
 
 namespace FoodServiceOccupancyForecast.Core.Interfaces;
 
 public interface IOccupancyService
 {
-    Task<OccupancyStats> GetCurrentOccupancyAsync();
-    Task<PeakHoursResult> GetPeakHoursAsync(DateTime date);
-    Task RecordOccupancyAsync(int totalGuests, int occupiedTables, int freeTables);
+    Task<OccupancySnapshot> GetCurrentAsync();
+    Task<IEnumerable<OccupancySnapshot>> GetPeakHoursAsync(DateTime date);
+    Task<IEnumerable<OccupancySnapshot>> GetForecastAsync(DateTime date, int days);
+    Task<double> GetLoadPercentageAsync();
 }

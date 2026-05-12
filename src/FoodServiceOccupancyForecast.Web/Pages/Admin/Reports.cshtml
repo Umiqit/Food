@@ -1,0 +1,104 @@
+@page
+@model FoodServiceOccupancyForecast.Web.Pages.Admin.ReportsModel
+@{
+    ViewData["Title"] = "Отчёты";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <h1>📈 Отчёты и аналитика</h1>
+</div>
+
+<div class="reports-grid">
+    <div class="report-card">
+        <h3>📊 Ежедневный отчёт</h3>
+        <p>Статистика посещаемости за выбранный день</p>
+        <div class="form-group">
+            <label>Дата</label>
+            <input type="date" id="daily-date" class="filter-input" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        </div>
+        <button class="btn-primary" onclick="exportDaily()">📥 Скачать PDF</button>
+    </div>
+
+    <div class="report-card">
+        <h3>📅 Еженедельный отчёт</h3>
+        <p>Сводка за неделю с графиками загрузки</p>
+        <div class="form-group">
+            <label>Неделя с</label>
+            <input type="date" id="weekly-start" class="filter-input" value="@DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd")" />
+        </div>
+        <button class="btn-primary" onclick="exportWeekly()">📥 Скачать PDF</button>
+    </div>
+
+    <div class="report-card">
+        <h3>📆 Ежемесячный отчёт</h3>
+        <p>Полный анализ месяца</p>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Месяц</label>
+                <input type="month" id="monthly-month" class="filter-input" value="@DateTime.Now.ToString("yyyy-MM")" />
+            </div>
+        </div>
+        <button class="btn-primary" onclick="exportMonthly()">📥 Скачать PDF</button>
+    </div>
+
+    <div class="report-card">
+        <h3>📋 Экспорт данных</h3>
+        <p>Сырые данные в Excel/CSV</p>
+        <button class="btn-primary" onclick="exportExcel()">📥 Скачать Excel</button>
+        <button class="btn-secondary" onclick="exportCSV()">📥 Скачать CSV</button>
+    </div>
+</div>
+
+<div class="report-preview">
+    <h3>Предпросмотр отчёта</h3>
+    <div id="report-content" class="report-content">
+        <p>Выберите тип отчёта и нажмите "Скачать"</p>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function exportDaily() {
+            const date = document.getElementById('daily-date').value;
+            const response = await fetch(`/api/analytics/daily?date=${date}`);
+            const data = await response.json();
+            generatePreview(data, `Ежедневный отчёт — ${date}`);
+        }
+
+        async function exportWeekly() {
+            const start = document.getElementById('weekly-start').value;
+            const response = await fetch(`/api/analytics/weekly?startDate=${start}`);
+            const data = await response.json();
+            generatePreview(data, `Еженедельный отчёт — с ${start}`);
+        }
+
+        async function exportMonthly() {
+            const month = document.getElementById('monthly-month').value;
+            const [year, monthNum] = month.split('-');
+            const response = await fetch(`/api/analytics/monthly?year=${year}&month=${monthNum}`);
+            const data = await response.json();
+            generatePreview(data, `Ежемесячный отчёт — ${month}`);
+        }
+
+        function generatePreview(data, title) {
+            const content = document.getElementById('report-content');
+            content.innerHTML = `
+                <h4>${title}</h4>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+                <p style="margin-top: 20px; color: #888;">
+                    В реальном проекте здесь будет сгенерирован PDF/Excel файл.<br>
+                    Используйте библиотеки: iTextSharp (PDF), EPPlus (Excel), CsvHelper (CSV).
+                </p>
+            `;
+        }
+
+        function exportExcel() {
+            alert('В реальном проекте: экспорт в Excel через EPPlus');
+        }
+
+        function exportCSV() {
+            alert('В реальном проекте: экспорт в CSV через CsvHelper');
+        }
+    </script>
+}

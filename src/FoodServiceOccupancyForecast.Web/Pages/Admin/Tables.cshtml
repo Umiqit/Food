@@ -1,0 +1,224 @@
+@page
+@model FoodServiceOccupancyForecast.Web.Pages.Admin.TablesModel
+@{
+    ViewData["Title"] = "Управление столами";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <h1>🪑 Управление столами</h1>
+    <div class="filters">
+        <select id="hall-filter" class="filter-select">
+            <option value="">Все залы</option>
+            <option value="Основной зал">Основной зал</option>
+            <option value="Круглый зал">Круглый зал</option>
+            <option value="Боковой зал">Боковой зал</option>
+        </select>
+        <select id="status-filter" class="filter-select">
+            <option value="">Все статусы</option>
+            <option value="Free">Свободен</option>
+            <option value="Occupied">Занят</option>
+            <option value="Reserved">Забронирован</option>
+        </select>
+    </div>
+</div>
+
+<div class="tables-management">
+    <div class="floor-plan-editor">
+        <div class="plan-container" id="admin-plan">
+            @foreach (var table in Model.Tables)
+            {
+                <div class="admin-table table-@table.Shape table-@table.Status.ToString().ToLower()"
+                     data-id="@table.Id"
+                     data-hall="@table.HallName"
+                     data-status="@table.Status"
+                     style="left: @(table.PositionX)px; top: @(table.PositionY)px;"
+                     draggable="true">
+                    <span class="table-number">@table.Id</span>
+                    <span class="table-seats">@table.Seats мест</span>
+                    <div class="table-actions">
+                        <button class="btn-action" onclick="setStatus(@table.Id, 'Free')">✓ Свободен</button>
+                        <button class="btn-action" onclick="setStatus(@table.Id, 'Occupied')">👤 Занят</button>
+                        <button class="btn-action" onclick="setStatus(@table.Id, 'Reserved')">📅 Бронь</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="tables-list">
+        <h3>Список столов</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Зал</th>
+                    <th>Мест</th>
+                    <th>Статус</th>
+                    <th>Гостей</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody id="tables-list-body">
+                @foreach (var table in Model.Tables)
+                {
+                    <tr data-hall="@table.HallName" data-status="@table.Status">
+                        <td>@table.Id</td>
+                        <td>@table.HallName</td>
+                        <td>@table.Seats</td>
+                        <td><span class="status-badge status-@table.Status.ToString().ToLower()">@table.Status</span></td>
+                        <td>@table.CurrentGuests</td>
+                        <td>
+                            <button class="btn-small" onclick="editTable(@table.Id)">✏️</button>
+                            <button class="btn-small btn-danger" onclick="deleteTable(@table.Id)">🗑️</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal for booking -->
+<div class="modal" id="bookingModal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h3>📅 Бронирование стола <span id="modal-table-id"></span></h3>
+        <form id="bookingForm">
+            <input type="hidden" id="booking-table-id" />
+            <div class="form-group">
+                <label>Имя клиента</label>
+                <input type="text" id="customer-name" required />
+            </div>
+            <div class="form-group">
+                <label>Телефон</label>
+                <input type="tel" id="customer-phone" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Дата</label>
+                    <input type="date" id="booking-date" required />
+                </div>
+                <div class="form-group">
+                    <label>Время</label>
+                    <input type="time" id="booking-time" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Количество гостей</label>
+                <input type="number" id="guests-count" min="1" max="20" required />
+            </div>
+            <div class="form-group">
+                <label>Примечания</label>
+                <textarea id="booking-notes" rows="2"></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Забронировать</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/floor-plan.js" asp-append-version="true"></script>
+    <script>
+        // Drag and drop
+        let draggedElement = null;
+        let initialX, initialY;
+
+        document.querySelectorAll('.admin-table').forEach(table => {
+            table.addEventListener('dragstart', (e) => {
+                draggedElement = table;
+                initialX = e.clientX - table.offsetLeft;
+                initialY = e.clientY - table.offsetTop;
+                table.style.opacity = '0.5';
+            });
+
+            table.addEventListener('dragend', async (e) => {
+                table.style.opacity = '1';
+                const newX = e.clientX - initialX;
+                const newY = e.clientY - initialY;
+                table.style.left = newX + 'px';
+                table.style.top = newY + 'px';
+
+                // Save position to server
+                await fetch(`/api/tables/${table.dataset.id}/position`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ x: newX, y: newY })
+                });
+
+                draggedElement = null;
+            });
+        });
+
+        // Filters
+        document.getElementById('hall-filter').addEventListener('change', filterTables);
+        document.getElementById('status-filter').addEventListener('change', filterTables);
+
+        function filterTables() {
+            const hall = document.getElementById('hall-filter').value;
+            const status = document.getElementById('status-filter').value;
+
+            document.querySelectorAll('.admin-table').forEach(table => {
+                const matchHall = !hall || table.dataset.hall === hall;
+                const matchStatus = !status || table.dataset.status === status;
+                table.style.display = matchHall && matchStatus ? 'flex' : 'none';
+            });
+
+            document.querySelectorAll('#tables-list-body tr').forEach(row => {
+                const matchHall = !hall || row.dataset.hall === hall;
+                const matchStatus = !status || row.dataset.status === status;
+                row.style.display = matchHall && matchStatus ? '' : 'none';
+            });
+        }
+
+        // Status update
+        async function setStatus(id, status) {
+            await fetch(`/api/tables/${id}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: status })
+            });
+        }
+
+        // Booking modal
+        const modal = document.getElementById('bookingModal');
+        document.querySelectorAll('.admin-table').forEach(table => {
+            table.addEventListener('dblclick', () => {
+                if (table.dataset.status === 'Free') {
+                    document.getElementById('modal-table-id').textContent = table.dataset.id;
+                    document.getElementById('booking-table-id').value = table.dataset.id;
+                    document.getElementById('booking-date').value = new Date().toISOString().split('T')[0];
+                    modal.style.display = 'block';
+                }
+            });
+        });
+
+        document.querySelector('.modal-close').addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const tableId = parseInt(document.getElementById('booking-table-id').value);
+            const data = {
+                tableId: tableId,
+                customerName: document.getElementById('customer-name').value,
+                customerPhone: document.getElementById('customer-phone').value,
+                guestsCount: parseInt(document.getElementById('guests-count').value),
+                bookingDate: document.getElementById('booking-date').value,
+                startTime: document.getElementById('booking-time').value,
+                endTime: document.getElementById('booking-time').value,
+                notes: document.getElementById('booking-notes').value
+            };
+
+            await fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            modal.style.display = 'none';
+            location.reload();
+        });
+    </script>
+}

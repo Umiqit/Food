@@ -1,8 +1,9 @@
-﻿namespace FoodServiceOccupancyForecast.Core.Enums;
+namespace FoodServiceOccupancyForecast.Core.Enums;
 
 public enum TableStatus
 {
-    Free = 0,        // Свободен
-    Occupied = 1,    // Занят
-    Reserved = 2     // Забронирован
+    Free = 0,
+    Occupied = 1,
+    Reserved = 2,
+    Cleaning = 3
 }

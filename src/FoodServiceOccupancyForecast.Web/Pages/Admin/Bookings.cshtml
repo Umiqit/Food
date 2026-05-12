@@ -1,0 +1,104 @@
+@page
+@model FoodServiceOccupancyForecast.Web.Pages.Admin.BookingsModel
+@{
+    ViewData["Title"] = "Бронирования";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <h1>📅 Управление бронированиями</h1>
+    <div class="filters">
+        <input type="date" id="date-filter" class="filter-input" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        <select id="status-filter" class="filter-select">
+            <option value="">Все статусы</option>
+            <option value="Pending">Ожидает</option>
+            <option value="Confirmed">Подтверждено</option>
+            <option value="Cancelled">Отменено</option>
+        </select>
+    </div>
+</div>
+
+<div class="bookings-container">
+    <div class="bookings-stats">
+        <div class="mini-stat">
+            <span class="mini-stat-value" id="pending-count">@Model.PendingCount</span>
+            <span class="mini-stat-label">Ожидают</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-value" id="confirmed-count">@Model.ConfirmedCount</span>
+            <span class="mini-stat-label">Подтверждено</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat-value" id="today-count">@Model.TodayCount</span>
+            <span class="mini-stat-label">На сегодня</span>
+        </div>
+    </div>
+
+    <table class="data-table bookings-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Стол</th>
+                <th>Клиент</th>
+                <th>Телефон</th>
+                <th>Дата</th>
+                <th>Время</th>
+                <th>Гостей</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody id="bookings-body">
+            @foreach (var booking in Model.Bookings)
+            {
+                <tr data-status="@booking.Status" data-date="@booking.BookingDate.ToString("yyyy-MM-dd")">
+                    <td>#@booking.Id</td>
+                    <td>Стол @booking.TableId</td>
+                    <td>@booking.CustomerName</td>
+                    <td>@booking.CustomerPhone</td>
+                    <td>@booking.BookingDate.ToString("dd.MM.yyyy")</td>
+                    <td>@booking.StartTime.ToString("hh\\:mm") - @booking.EndTime.ToString("hh\\:mm")</td>
+                    <td>@booking.GuestsCount</td>
+                    <td><span class="status-badge status-@booking.Status.ToString().ToLower()">@booking.Status</span></td>
+                    <td>
+                        @if (booking.Status == FoodServiceOccupancyForecast.Core.Enums.BookingStatus.Pending)
+                        {
+                            <button class="btn-small btn-success" onclick="confirmBooking(@booking.Id)">✓</button>
+                        }
+                        <button class="btn-small btn-danger" onclick="cancelBooking(@booking.Id)">✕</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        async function confirmBooking(id) {
+            await fetch(`/api/bookings/${id}/confirm`, { method: 'PUT' });
+            location.reload();
+        }
+
+        async function cancelBooking(id) {
+            if (confirm('Отменить бронирование?')) {
+                await fetch(`/api/bookings/${id}`, { method: 'DELETE' });
+                location.reload();
+            }
+        }
+
+        document.getElementById('date-filter').addEventListener('change', filterBookings);
+        document.getElementById('status-filter').addEventListener('change', filterBookings);
+
+        function filterBookings() {
+            const date = document.getElementById('date-filter').value;
+            const status = document.getElementById('status-filter').value;
+
+            document.querySelectorAll('#bookings-body tr').forEach(row => {
+                const matchDate = !date || row.dataset.date === date;
+                const matchStatus = !status || row.dataset.status === status;
+                row.style.display = matchDate && matchStatus ? '' : 'none';
+            });
+        }
+    </script>
+}
