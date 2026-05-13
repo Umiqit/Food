@@ -1,4 +1,5 @@
 using System;
+using FoodServiceOccupancyForecast.Core.Enums;
 
 namespace FoodServiceOccupancyForecast.Core.Entities
 {
@@ -9,17 +10,9 @@ namespace FoodServiceOccupancyForecast.Core.Entities
         public string? CustomerName { get; set; }
         public string? CustomerPhone { get; set; }
         public DateTime BookingTime { get; set; }
-        public DateTime? EndTime { get; set; }
-        public int GuestCount { get; set; }
+        public int GuestsCount { get; set; }
         public BookingStatus Status { get; set; }
-        public DateTime CreatedAt { get; set; }
-    }
-
-    public enum BookingStatus
-    {
-        Pending,
-        Confirmed,
-        Cancelled,
-        Completed
+        public string? Notes { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

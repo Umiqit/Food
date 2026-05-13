@@ -1,10 +1,14 @@
-namespace FoodServiceOccupancyForecast.Core.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-public interface IRepository<T> where T : class
+namespace FoodServiceOccupancyForecast.Core.Interfaces
 {
-    Task<T?> GetByIdAsync(int id);
-    Task<IEnumerable<T>> GetAllAsync();
-    Task AddAsync(T entity);
-    Task UpdateAsync(T entity);
-    Task DeleteAsync(int id);
+    public interface IRepository<T> where T : class
+    {
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T?> GetByIdAsync(int id);
+        Task AddAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(int id);
+    }
 }

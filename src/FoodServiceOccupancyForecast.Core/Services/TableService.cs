@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FoodServiceOccupancyForecast.Core.Entities;
 using FoodServiceOccupancyForecast.Core.Enums;
 using FoodServiceOccupancyForecast.Core.Interfaces;
 
-namespace FoodServiceOccupancyForecast.Core.Services
+namespace FoodServiceOccupancyForecast.Web.Services
 {
     public class TableService
     {
@@ -25,40 +26,27 @@ namespace FoodServiceOccupancyForecast.Core.Services
             return await _tableRepository.GetByIdAsync(id);
         }
 
-        public async Task UpdateTableStatusAsync(int tableId, TableStatus status)
+        public async Task UpdateTableStatusAsync(int id, TableStatus status)
         {
-            var table = await _tableRepository.GetByIdAsync(tableId);
-            if (table != null)
-            {
-                table.Status = status;
-                await _tableRepository.UpdateAsync(table);
-            }
+            await _tableRepository.UpdateStatusAsync(id, status, null);
         }
 
         public async Task<int> GetOccupiedCountAsync()
         {
-            var tables = await _tableRepository.GetAllAsync();
-            int count = 0;
-            foreach (var t in tables) if (t.Status == TableStatus.Occupied) count++;
-            return count;
+            var tables = await _tableRepository.GetByStatusAsync(TableStatus.Occupied);
+            return tables.Count();
         }
 
         public async Task<int> GetReservedCountAsync()
         {
-            var tables = await _tableRepository.GetAllAsync();
-            int count = 0;
-            foreach (var t in tables) if (t.Status == TableStatus.Reserved) count++;
-            return count;
+            var tables = await _tableRepository.GetByStatusAsync(TableStatus.Reserved);
+            return tables.Count();
         }
 
         public async Task<int> GetTotalGuestsAsync()
         {
             var tables = await _tableRepository.GetAllAsync();
-            int guests = 0;
-            foreach (var t in tables)
-                if (t.Status == TableStatus.Occupied && t.CurrentGuests.HasValue)
-                    guests += t.CurrentGuests.Value;
-            return guests;
+            return tables.Sum(t => t.CurrentGuests ?? 0);
         }
     }
 }

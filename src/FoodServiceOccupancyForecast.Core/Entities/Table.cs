@@ -1,3 +1,5 @@
+using FoodServiceOccupancyForecast.Core.Enums;
+
 namespace FoodServiceOccupancyForecast.Core.Entities
 {
     public class Table
