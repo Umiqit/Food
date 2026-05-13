@@ -1,117 +1,49 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using FoodServiceOccupancyForecast.Core.Entities;
-using FoodServiceOccupancyForecast.Core.Interfaces;
-using FoodServiceOccupancyForecast.Web.Hubs;
+using FoodServiceOccupancyForecast.Core.Services;
 
-namespace FoodServiceOccupancyForecast.Web.Controllers.Api;
-
-[ApiController]
-[Route("api/[controller]")]
-public class BookingsController : ControllerBase
+namespace FoodServiceOccupancyForecast.Web.Controllers.Api
 {
-    private readonly IBookingRepository _bookingRepository;
-    private readonly ITableRepository _tableRepository;
-    private readonly IHubContext<OccupancyHub> _hubContext;
-
-    public BookingsController(
-        IBookingRepository bookingRepository, 
-        ITableRepository tableRepository,
-        IHubContext<OccupancyHub> hubContext)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BookingsController : ControllerBase
     {
-        _bookingRepository = bookingRepository;
-        _tableRepository = tableRepository;
-        _hubContext = hubContext;
-    }
+        private readonly BookingService _bookingService;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Booking>>> GetAll()
-    {
-        var bookings = await _bookingRepository.GetAllAsync();
-        return Ok(bookings);
-    }
-
-    [HttpGet("pending")]
-    public async Task<ActionResult<IEnumerable<Booking>>> GetPending()
-    {
-        var bookings = await _bookingRepository.GetPendingAsync();
-        return Ok(bookings);
-    }
-
-    [HttpGet("by-date/{date:datetime}")]
-    public async Task<ActionResult<IEnumerable<Booking>>> GetByDate(DateTime date)
-    {
-        var bookings = await _bookingRepository.GetByDateAsync(date);
-        return Ok(bookings);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Booking>> GetById(int id)
-    {
-        var booking = await _bookingRepository.GetByIdAsync(id);
-        if (booking == null) return NotFound();
-        return Ok(booking);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<Booking>> Create([FromBody] CreateBookingRequest request)
-    {
-        var booking = new Booking
+        public BookingsController(BookingService bookingService)
         {
-            TableId = request.TableId,
-            CustomerName = request.CustomerName,
-            CustomerPhone = request.CustomerPhone,
-            GuestsCount = request.GuestsCount,
-            BookingDate = request.BookingDate,
-            StartTime = request.StartTime,
-            EndTime = request.EndTime,
-            Notes = request.Notes
-        };
+            _bookingService = bookingService;
+        }
 
-        await _bookingRepository.AddAsync(booking);
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Booking>>> GetAll()
+        {
+            var bookings = await _bookingService.GetAllBookingsAsync();
+            return Ok(bookings);
+        }
 
-        await _tableRepository.UpdateStatusAsync(request.TableId, Core.Enums.TableStatus.Reserved);
+        [HttpGet("pending")]
+        public async Task<ActionResult<IEnumerable<Booking>>> GetPending()
+        {
+            var bookings = await _bookingService.GetPendingBookingsAsync();
+            return Ok(bookings);
+        }
 
-        await OccupancyHub.BroadcastNewBooking(_hubContext, new { 
-            Id = booking.Id, 
-            TableId = booking.TableId, 
-            CustomerName = booking.CustomerName,
-            Status = booking.Status.ToString()
-        });
+        [HttpPost]
+        public async Task<ActionResult<Booking>> Create([FromBody] Booking booking)
+        {
+            var created = await _bookingService.CreateBookingAsync(booking);
+            return CreatedAtAction(nameof(GetAll), new { id = created.Id }, created);
+        }
 
-        return CreatedAtAction(nameof(GetById), new { id = booking.Id }, booking);
+        [HttpPut("{id}/confirm")]
+        public async Task<IActionResult> Confirm(int id)
+        {
+            await _bookingService.ConfirmBookingAsync(id);
+            return NoContent();
+        }
     }
-
-    [HttpPut("{id}/confirm")]
-    public async Task<IActionResult> Confirm(int id)
-    {
-        await _bookingRepository.ConfirmAsync(id);
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Cancel(int id)
-    {
-        var booking = await _bookingRepository.GetByIdAsync(id);
-        if (booking == null) return NotFound();
-
-        await _bookingRepository.CancelAsync(id);
-
-        await _tableRepository.UpdateStatusAsync(booking.TableId, Core.Enums.TableStatus.Free);
-
-        return NoContent();
-    }
-}
-
-public class CreateBookingRequest
-{
-    public int TableId { get; set; }
-    public string CustomerName { get; set; } = string.Empty;
-    public string? CustomerPhone { get; set; }
-    public string? CustomerEmail { get; set; }
-    public int GuestsCount { get; set; }
-    public DateTime BookingDate { get; set; }
-    public TimeSpan StartTime { get; set; }
-    public TimeSpan EndTime { get; set; }
-    public string? Notes { get; set; }
 }

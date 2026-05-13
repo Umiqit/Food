@@ -1,15 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using FoodServiceOccupancyForecast.Core.Entities;
-using FoodServiceOccupancyForecast.Core.Enums;
 
-namespace FoodServiceOccupancyForecast.Core.Interfaces;
-
-public interface IBookingRepository : IRepository<Booking>
+namespace FoodServiceOccupancyForecast.Core.Interfaces
 {
-    Task<IEnumerable<Booking>> GetPendingAsync();
-    Task<IEnumerable<Booking>> GetByDateAsync(DateTime date);
-    Task<IEnumerable<Booking>> GetByTableAsync(int tableId);
-    Task<IEnumerable<Booking>> GetByTableAndTimeAsync(int tableId, DateTime dateTime);
-    Task<IEnumerable<Booking>> GetBookingsForDateAsync(DateTime date);
-    Task ConfirmAsync(int id);
-    Task CancelAsync(int id);
+    public interface IBookingRepository
+    {
+        Task<IEnumerable<Booking>> GetAllAsync();
+        Task<Booking?> GetByIdAsync(int id);
+        Task<IEnumerable<Booking>> GetByTableIdAsync(int tableId);
+        Task<IEnumerable<Booking>> GetByDateAsync(DateTime date);
+        Task<IEnumerable<Booking>> GetPendingAsync();
+        Task AddAsync(Booking booking);
+        Task UpdateAsync(Booking booking);
+        Task DeleteAsync(int id);
+    }
 }

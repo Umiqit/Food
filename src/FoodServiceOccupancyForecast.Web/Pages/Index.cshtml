@@ -1,0 +1,73 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - FoodServiceOccupancyForecast</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #333333;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .logo { font-size: 48px; font-weight: 600; color: #CEA475; }
+        .subtitle { font-size: 20px; color: #AAAAAA; }
+        .enter-btn {
+            padding: 15px 50px;
+            background: #22DDB2;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .enter-btn:hover { background: #1CC9A0; }
+        .features {
+            display: flex;
+            gap: 40px;
+            margin-top: 40px;
+        }
+        .feature {
+            text-align: center;
+            color: #888;
+        }
+        .feature-icon { font-size: 36px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="logo">FoodService</div>
+    <div class="subtitle">Система прогнозирования загруженности</div>
+    <a href="/RestaurantMap" class="enter-btn">Открыть карту ресторана</a>
+    <div class="features">
+        <div class="feature">
+            <div class="feature-icon">📹</div>
+            <div>AI-видеоаналитика</div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">📊</div>
+            <div>Прогнозирование</div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🗺️</div>
+            <div>Интерактивная карта</div>
+        </div>
+    </div>
+</body>
+</html>

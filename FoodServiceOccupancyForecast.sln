@@ -1,14 +1,15 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11723.189 insiders
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodServiceOccupancyForecast.Web", "src\FoodServiceOccupancyForecast.Web\FoodServiceOccupancyForecast.Web.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodServiceOccupancyForecast.Core", "src\FoodServiceOccupancyForecast.Core\FoodServiceOccupancyForecast.Core.csproj", "{54C1DEA4-FC7A-43A3-ADD8-5D533CDA4124}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodServiceOccupancyForecast.Core", "src\FoodServiceOccupancyForecast.Core\FoodServiceOccupancyForecast.Core.csproj", "{B2C3D4E5-F6A7-8901-BCDE-F23456789012}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodServiceOccupancyForecast.Infrastructure", "src\FoodServiceOccupancyForecast.Infrastructure\FoodServiceOccupancyForecast.Infrastructure.csproj", "{3A46A39D-FD96-43D9-92C8-39517E0A878C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodServiceOccupancyForecast.Infrastructure", "src\FoodServiceOccupancyForecast.Infrastructure\FoodServiceOccupancyForecast.Infrastructure.csproj", "{C3D4E5F6-A7B8-9012-CDEF-345678901234}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodServiceOccupancyForecast.VideoAnalysis", "src\FoodServiceOccupancyForecast.VideoAnalysis\FoodServiceOccupancyForecast.VideoAnalysis.csproj", "{0FFECA76-9ACC-4A5D-80C2-BEB4E92EACFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodServiceOccupancyForecast.VideoAnalysis", "src\FoodServiceOccupancyForecast.VideoAnalysis\FoodServiceOccupancyForecast.VideoAnalysis.csproj", "{D4E5F6A7-B8C9-0123-DEFA-456789012345}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodServiceOccupancyForecast.Web", "src\FoodServiceOccupancyForecast.Web\FoodServiceOccupancyForecast.Web.csproj", "{30FE9FC1-A99A-48E8-A359-60BB333220FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,21 +17,24 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B2C3D4E5-F6A7-8901-BCDE-F23456789012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2C3D4E5-F6A7-8901-BCDE-F23456789012}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2C3D4E5-F6A7-8901-BCDE-F23456789012}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2C3D4E5-F6A7-8901-BCDE-F23456789012}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C3D4E5F6-A7B8-9012-CDEF-345678901234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C3D4E5F6-A7B8-9012-CDEF-345678901234}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C3D4E5F6-A7B8-9012-CDEF-345678901234}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C3D4E5F6-A7B8-9012-CDEF-345678901234}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4E5F6A7-B8C9-0123-DEFA-456789012345}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4E5F6A7-B8C9-0123-DEFA-456789012345}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4E5F6A7-B8C9-0123-DEFA-456789012345}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4E5F6A7-B8C9-0123-DEFA-456789012345}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54C1DEA4-FC7A-43A3-ADD8-5D533CDA4124}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54C1DEA4-FC7A-43A3-ADD8-5D533CDA4124}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54C1DEA4-FC7A-43A3-ADD8-5D533CDA4124}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54C1DEA4-FC7A-43A3-ADD8-5D533CDA4124}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A46A39D-FD96-43D9-92C8-39517E0A878C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A46A39D-FD96-43D9-92C8-39517E0A878C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A46A39D-FD96-43D9-92C8-39517E0A878C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A46A39D-FD96-43D9-92C8-39517E0A878C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FFECA76-9ACC-4A5D-80C2-BEB4E92EACFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FFECA76-9ACC-4A5D-80C2-BEB4E92EACFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FFECA76-9ACC-4A5D-80C2-BEB4E92EACFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FFECA76-9ACC-4A5D-80C2-BEB4E92EACFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30FE9FC1-A99A-48E8-A359-60BB333220FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30FE9FC1-A99A-48E8-A359-60BB333220FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30FE9FC1-A99A-48E8-A359-60BB333220FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30FE9FC1-A99A-48E8-A359-60BB333220FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

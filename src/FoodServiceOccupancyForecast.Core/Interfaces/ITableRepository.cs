@@ -1,12 +1,16 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using FoodServiceOccupancyForecast.Core.Entities;
-using FoodServiceOccupancyForecast.Core.Enums;
 
-namespace FoodServiceOccupancyForecast.Core.Interfaces;
-
-public interface ITableRepository : IRepository<Table>
+namespace FoodServiceOccupancyForecast.Core.Interfaces
 {
-    Task<IEnumerable<Table>> GetByStatusAsync(TableStatus status);
-    Task<IEnumerable<Table>> GetAvailableAsync(DateTime date, TimeSpan start, TimeSpan end);
-    Task<IEnumerable<Table>> GetByHallAsync(string hallName);
-    Task UpdateStatusAsync(int id, TableStatus status, int? guests = null);
+    public interface ITableRepository
+    {
+        Task<IEnumerable<Table>> GetAllAsync();
+        Task<Table?> GetByIdAsync(int id);
+        Task<Table?> GetByNumberAsync(int number);
+        Task UpdateAsync(Table table);
+        Task<IEnumerable<Table>> GetByHallIdAsync(int hallId);
+        Task<IEnumerable<Table>> GetByStatusAsync(TableStatus status);
+    }
 }

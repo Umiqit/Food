@@ -1,10 +1,14 @@
-namespace FoodServiceOccupancyForecast.Core.Entities;
+using System;
 
-public class Visitor
+namespace FoodServiceOccupancyForecast.Core.Entities
 {
-    public int Id { get; set; }
-    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-    public int Count { get; set; }
-    public string? Zone { get; set; }
-    public string? Source { get; set; }
+    public class Visitor
+    {
+        public int Id { get; set; }
+        public DateTime EntryTime { get; set; }
+        public DateTime? ExitTime { get; set; }
+        public int? TableId { get; set; }
+        public int? CameraId { get; set; }
+        public string? DetectionSource { get; set; }
+    }
 }

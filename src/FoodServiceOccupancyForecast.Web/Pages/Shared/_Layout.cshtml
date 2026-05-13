@@ -1,29 +1,15 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] — Гулиновъ</title>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/floor-plan.css" asp-append-version="true" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FoodServiceOccupancyForecast</title>
+    <link rel="stylesheet" href="~/css/restaurant-map.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="site-header">
-        <div class="logo">Гулиновъ <span>Ресторан</span></div>
-        <nav>
-            <a href="/">Главная</a>
-            <a href="/Client/Index">Бронирование</a>
-            <a href="/Admin/Dashboard">Админка</a>
-        </nav>
-    </header>
-    <main>
-        @RenderBody()
-    </main>
-    <footer class="site-footer">
-        <p>© 2026 Гулиновъ — Система мониторинга</p>
-    </footer>
-    <script src="~/js/signalr-client.js" asp-append-version="true"></script>
+    @RenderBody()
+    <script src="~/js/restaurant-map.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
