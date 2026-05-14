@@ -1,10 +1,6 @@
-/* ============================================
-   RESTAURANT MAP - INTERACTIVE FLOOR PLAN
-   Generated from Figma design
-   ============================================ */
+/* restaurant-map.css - Fixed version with correct SVG paths */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-
+/* ===== BASE ===== */
 * {
     margin: 0;
     padding: 0;
@@ -13,30 +9,23 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background: #333333;
-    color: #FFFFFF;
+    background: #1a1a1a;
     overflow: hidden;
     width: 100vw;
     height: 100vh;
 }
 
-/* ============================================
-   MAIN LAYOUT
-   ============================================ */
-
+/* ===== MAP CONTAINER ===== */
 .restaurant-map {
     position: relative;
     width: 1920px;
     height: 1080px;
     background: #333333;
-    margin: 0 auto;
-    overflow: hidden;
+    transform-origin: top left;
+    will-change: transform;
 }
 
-/* ============================================
-   HEADER
-   ============================================ */
-
+/* ===== HEADER ===== */
 .header {
     position: absolute;
     width: 1920px;
@@ -44,42 +33,36 @@ body {
     left: 0;
     top: 0;
     background: #3F3F3F;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
     z-index: 100;
 }
 
 .header__logo {
     position: absolute;
-    width: 271px;
-    height: 78px;
     left: 7px;
     top: 2px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .logo-vector {
     width: 40px;
     height: 40px;
-    background: #CEA475;
-    opacity: 0.95;
-    border-radius: 4px;
+    background: url('../branding/logo.svg') no-repeat center/contain;
+    border-radius: 8px;
 }
 
 .logo-text {
     font-size: 24px;
-    font-weight: 600;
+    font-weight: 500;
     color: #CEA475;
 }
 
-/* Statistics blocks */
+/* Statistics */
 .statistics-container {
+    position: absolute;
     display: flex;
     gap: 20px;
-    position: absolute;
     left: 478px;
     top: 10px;
 }
@@ -88,57 +71,41 @@ body {
 .statistics-2-container,
 .statistics-3-container {
     display: flex;
-    flex-direction: row;
     align-items: center;
+    gap: 10px;
     background: #4D4D4D;
     border-radius: 10px;
-    padding: 0;
+    padding: 8px 15px;
     height: 56px;
 }
 
-.statistics-1-container { width: 294px; }
-.statistics-2-container { width: 295px; }
-.statistics-3-container { width: 338px; }
-
 .statistics-icon {
-    width: 54px;
-    height: 54px;
-    background: #5A5A5A;
-    border-radius: 8px 0 0 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+    width: 46px;
+    height: 46px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
 }
 
-.statistics-right-block {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    flex: 1;
+.statistics-1-container .statistics-icon {
+    background-image: url('../icons/table.svg');
+}
+
+.statistics-2-container .statistics-icon {
+    background-image: url('../icons/person.svg');
+}
+
+.statistics-3-container .statistics-icon {
+    background-image: url('../icons/calendar.svg');
 }
 
 .statistics-text {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 24px;
-    display: flex;
-    align-items: center;
-    text-align: center;
+    font-size: 18px;
     color: #FFFFFF;
+    white-space: nowrap;
 }
 
-.statistics-1-container .statistics-text {
-    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-}
-
-/* ============================================
-   LEFT SIDEBAR MENU
-   ============================================ */
-
+/* ===== LEFT SIDEBAR ===== */
 .left-menu-container {
     position: absolute;
     width: 240px;
@@ -147,85 +114,67 @@ body {
     top: 0;
     background: #5A5A5A;
     z-index: 90;
-    padding-top: 80px;
+    padding-top: 100px;
 }
 
 .left-menu__contain-buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0;
-    gap: 27px;
-    position: absolute;
-    width: 214px;
-    left: 13px;
-    top: 129px;
+    gap: 12px;
+    padding: 0 13px;
 }
 
+/* Navigation button */
 .contain-buttons__navigation {
-    width: 214px;
-    height: 51px;
-    position: relative;
-}
-
-.navigation-rect {
-    position: absolute;
     width: 187px;
     height: 43px;
-    left: 17px;
-    top: 0;
     background: #D9D9D9;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
 .navigation-text {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
     font-size: 16px;
-    line-height: 19px;
     color: #000000;
 }
 
-/* Navigation items */
+/* Hall buttons */
 .nav-item {
     width: 214px;
+    min-height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    background: #D9D9D9;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background 0.2s;
-    border-radius: 5px;
+    transition: all 0.2s ease;
+    padding: 10px;
 }
 
 .nav-item:hover {
-    background: rgba(255,255,255,0.1);
+    background: #CCCCCC;
+    transform: translateX(3px);
 }
 
 .nav-item--active {
-    background: #CCD2D0;
+    background: #00E9AB !important;
+    font-weight: 600;
+    box-shadow: 0 0 10px rgba(0, 233, 171, 0.4);
 }
 
 .nav-item--highlight {
-    background: #22DDB2;
+    background: #22DDB2 !important;
 }
 
 .nav-item-text {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
+    font-size: 20px;
     color: #000000;
-}
-
-.nav-item--active .nav-item-text,
-.nav-item--highlight .nav-item-text {
-    color: #000000;
+    text-align: center;
 }
 
 /* Sub buttons */
@@ -233,33 +182,28 @@ body {
 .contain-buttons__analitics,
 .contain-buttons__reservations,
 .contain-buttons__info-about {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 45px;
-    gap: 10px;
     width: 184px;
-    height: 45px;
+    height: 44px;
     background: #E1E1E1;
     border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    margin-top: 5px;
 }
 
 .contain-buttons__personal:hover,
 .contain-buttons__analitics:hover,
 .contain-buttons__reservations:hover,
 .contain-buttons__info-about:hover {
-    background: #CCCCCC;
+    background: #D0D0D0;
+    transform: translateX(3px);
 }
 
 .sub-button-text {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
     font-size: 16px;
-    line-height: 19px;
     color: #000000;
 }
 
@@ -269,74 +213,73 @@ body {
     width: 240px;
     height: 62px;
     left: 0;
-    top: 1010px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 24px;
+    bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    font-size: 20px;
     color: #FFFFFF;
 }
 
-/* ============================================
-   MAP AREA
-   ============================================ */
-
+/* ===== MAP AREA ===== */
 .map-area {
     position: absolute;
     left: 240px;
     top: 80px;
     width: 1680px;
     height: 1000px;
-    overflow: hidden;
 }
 
-/* Background branch decoration */
+/* Background decoration - vetka */
 .vetka {
     position: absolute;
     width: 548px;
     height: 1146px;
-    right: -50px;
+    right: 0;
     top: 10px;
-    background: url('../images/vetka.png');
+    background: url('../layout/branch.svg') no-repeat center/contain;
     opacity: 0.12;
     pointer-events: none;
-    z-index: 1;
 }
 
-/* ============================================
-   ROOMS / ZONES
-   ============================================ */
-
-/* Hall 1 - Main rectangular hall */
-.hall-1-container {
+/* ===== HALL CONTAINERS ===== */
+.hall-1-container,
+.circle-hall-container,
+.hall-3-container,
+.veranda-container,
+.kitchen-container,
+.bar-container,
+.wardrobe-container,
+.reception-container,
+.corridor2,
+.exite-block,
+.WC1-container,
+.WC2,
+.WC3-container,
+.kid-room-container,
+.ladder-container,
+.dishwasher-room-container {
     position: absolute;
+    transition: opacity 0.3s ease;
+}
+
+/* Hall 1 */
+.hall-1-container {
     width: 444.28px;
     height: 619px;
-    left: 638px;
+    left: 878px;
     top: 103px;
 }
 
 .hall-1 {
-    box-sizing: border-box;
-    position: absolute;
     width: 436px;
     height: 619px;
-    left: 3px;
-    top: 0;
-    background: #4A4A4A;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
     border: 1px solid #000000;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
 }
 
 /* Circle Hall */
 .circle-hall-container {
-    position: absolute;
     width: 366px;
     height: 370px;
     left: 1012px;
@@ -344,20 +287,13 @@ body {
 }
 
 .circle--body {
-    position: absolute;
     width: 366px;
     height: 349px;
-    left: 0;
-    top: 21px;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
-    border-radius: 50%;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
 }
 
-/* Hall 3 - Second floor */
+/* Hall 3 (2nd floor) */
 .hall-3-container {
-    position: absolute;
     width: 854px;
     height: 619px;
     left: 514px;
@@ -365,19 +301,13 @@ body {
 }
 
 .hall-3-body {
-    position: absolute;
     width: 852px;
     height: 619px;
-    left: 0;
-    top: 0;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
 }
 
 /* Veranda */
 .veranda-container {
-    position: absolute;
     width: 180px;
     height: 251px;
     left: 1380px;
@@ -385,19 +315,13 @@ body {
 }
 
 .veranda-body {
-    position: absolute;
     width: 180px;
     height: 251px;
-    left: 0;
-    top: 0;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
 }
 
 /* Kitchen */
 .kitchen-container {
-    position: absolute;
     width: 255.08px;
     height: 391px;
     left: 625px;
@@ -405,156 +329,34 @@ body {
 }
 
 .kitchen-body {
-    position: absolute;
     width: 255px;
     height: 387px;
-    left: 0;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
+}
+
+/* Bar */
+.bar-container {
+    width: 199px;
+    height: 124.46px;
+    left: 75px;
     top: 0;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
 }
 
-.kitchen-label {
+.bar {
+    width: 199px;
+    height: 97px;
+    background: url('../layout/bar.svg') no-repeat center/contain;
+}
+
+.bar__chair {
     position: absolute;
-    width: 124px;
-    height: 63px;
-    left: 12px;
-    top: 194px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #000000;
-}
-
-/* Reception */
-.reception-container {
-    position: absolute;
-    width: 543px;
-    height: 232px;
-    left: 366px;
-    top: 830px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0;
-    isolation: isolate;
-}
-
-.reception-body {
-    width: 543px;
-    height: 232px;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
-}
-
-/* WC areas */
-.WC1-container {
-    position: absolute;
-    width: 186px;
-    height: 85px;
-    left: 440px;
-    top: 741px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0;
-    isolation: isolate;
-}
-
-.WC1-body {
-    width: 186px;
-    height: 87px;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
-}
-
-.WC-label {
-    position: absolute;
-    width: 91px;
-    height: 41px;
-    left: 61px;
-    top: 26px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #000000;
-}
-
-.WC2 {
-    position: absolute;
-    width: 95px;
-    height: 74px;
-    left: 374px;
-    top: 551px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 23px 6px 10px 12px;
-    gap: 10px;
-    isolation: isolate;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
-}
-
-.WC2__label {
-    width: 55px;
-    height: 27px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #000000;
-}
-
-/* Kid room */
-.kid-room-container {
-    position: absolute;
-    width: 167px;
-    height: 87px;
-    left: 730px;
-    top: 741px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0;
-    isolation: isolate;
-}
-
-.kid-room-body {
-    width: 167px;
-    height: 87px;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
-}
-
-.kid-room-label {
-    position: absolute;
-    width: 91px;
-    height: 41px;
-    left: 43px;
-    top: 26px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #000000;
+    width: 30px;
+    height: 33px;
+    background: url('../layout/bar-chair.svg') no-repeat center/contain;
 }
 
 /* Wardrobe */
 .wardrobe-container {
-    position: absolute;
     width: 253.28px;
     height: 185px;
     left: 1317px;
@@ -562,146 +364,103 @@ body {
 }
 
 .wardrobe-body {
-    position: absolute;
     width: 247px;
     height: 185px;
-    left: 2px;
-    top: 0;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
 }
 
-.wardrobe-label {
+/* Reception */
+.reception-container {
+    width: 543px;
+    height: 232px;
+    left: 366px;
+    top: 830px;
+}
+
+.reception-body {
+    width: 543px;
+    height: 232px;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
+}
+
+.reception-body__main-table {
     position: absolute;
-    width: 116px;
-    height: 21px;
-    left: 77px;
-    top: 4px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #000000;
+    width: 224px;
+    height: 204px;
+    background: url('../layout/reception-main-table.svg') no-repeat center/contain;
 }
 
-.wardrobe-line {
+.reception-body__chair {
     position: absolute;
-    width: 249.01px;
-    height: 0;
-    left: 0;
-    top: 35.03px;
-    border: 1px solid #000000;
-    transform: rotate(-0.45deg);
+    width: 34.51px;
+    height: 35.28px;
+    background: url('../layout/reception-chair.svg') no-repeat center/contain;
 }
 
-/* Corridors */
-.corridor-medium {
+.reception-body__table1,
+.reception-body__table2 {
     position: absolute;
-    width: 135px;
-    height: 242px;
-    left: 888px;
-    top: 702px;
+    width: 58.49px;
+    height: 42px;
+    background: url('../layout/reception-table2.svg') no-repeat center/contain;
 }
 
-.corridor2 {
+.reception-body__sofa {
     position: absolute;
-    width: 544px;
-    height: 67px;
-    left: 338px;
-    top: 629px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 22px 183px 23px 189px;
-    gap: 10px;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
+    width: 79.8px;
+    height: 44.3px;
+    background: url('../layout/table-sofa.svg') no-repeat center/contain;
 }
 
-.corridor2-text {
-    width: 91px;
-    height: 24px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 24px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #000000;
+/* Other rooms */
+.WC1-container {
+    width: 186px;
+    height: 85px;
+    left: 440px;
+    top: 741px;
 }
 
-/* Exit block */
-.exite-block {
-    position: absolute;
-    width: 62px;
-    height: 202px;
-    left: 304px;
-    top: 494px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 8px 5px 163px 11px;
-    gap: 10px;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
+.WC1-body {
+    width: 186px;
+    height: 87px;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
 }
 
-.exit-text {
-    width: 46px;
-    height: 54px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #000000;
+.WC2 {
+    width: 95px;
+    height: 74px;
+    left: 374px;
+    top: 551px;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
 }
 
-/* Dishwasher room */
-.dishwasher-room-container {
-    position: absolute;
-    width: 128px;
-    height: 135px;
-    left: 477px;
-    top: 494px;
+.WC3-container {
+    width: 150px;
+    height: 92px;
+    left: 1360px;
+    top: 287px;
 }
 
-.dishwasher-body {
-    position: absolute;
-    width: 128px;
-    height: 131px;
-    left: 0;
-    top: 0;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
+.WC3-body {
+    width: 150px;
+    height: 88px;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
 }
 
-.dishwasher-label {
-    position: absolute;
-    width: 68px;
-    height: 26px;
-    left: 50px;
-    top: 30px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 22px;
-    color: #000000;
+.kid-room-container {
+    width: 167px;
+    height: 87px;
+    left: 730px;
+    top: 741px;
 }
 
-/* Ladder */
+.kid-room-body {
+    width: 167px;
+    height: 87px;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
+}
+
 .ladder-container {
-    position: absolute;
     width: 140.49px;
     height: 129.44px;
     left: 743px;
@@ -709,56 +468,147 @@ body {
 }
 
 .ladder-body {
-    position: absolute;
     width: 137px;
     height: 126px;
-    left: 0;
-    top: 0;
-    background: #4A4A4A;
-    background-image: url('../images/gray-parquet.jpg');
-    background-size: cover;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
 }
 
-.ladder-label {
+.dishwasher-room-container {
+    width: 128px;
+    height: 135px;
+    left: 477px;
+    top: 494px;
+}
+
+.dishwasher-body {
+    width: 128px;
+    height: 131px;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
+}
+
+.dishwasher-room__sink {
     position: absolute;
-    width: 98px;
-    height: 72px;
-    left: 20px;
-    top: 42px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 22px;
-    color: #000000;
+    width: 108.85px;
+    height: 37.12px;
+    background: url('../layout/sink.svg') no-repeat center/contain;
 }
 
-/* ============================================
-   TABLES
-   ============================================ */
+.dishwasher-room__table {
+    position: absolute;
+    width: 81.82px;
+    height: 21.75px;
+    background: url('../layout/table-short.svg') no-repeat center/contain;
+}
 
+.dishwaher-room__door5 {
+    position: absolute;
+    width: 38px;
+    height: 31px;
+    background: url('../layout/dishwasher-door.svg') no-repeat center/contain;
+}
+
+.corridor2 {
+    width: 544px;
+    height: 67px;
+    left: 338px;
+    top: 629px;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
+}
+
+.exite-block {
+    width: 62px;
+    height: 202px;
+    left: 304px;
+    top: 494px;
+    background: url('../layout/reception-bg.svg') no-repeat center/cover;
+}
+
+/* Kitchen elements */
+.kitchen__sink {
+    position: absolute;
+    width: 153.05px;
+    height: 53.86px;
+    background: url('../layout/sink.svg') no-repeat center/contain;
+}
+
+.kitchen__gas-stove2,
+.kitchen__gas-stove1 {
+    position: absolute;
+    width: 167px;
+    height: 56px;
+    background: url('../layout/gas-stove.svg') no-repeat center/contain;
+}
+
+.kitchen__table--short {
+    position: absolute;
+    width: 76.03px;
+    height: 42.56px;
+    background: url('../layout/table-short.svg') no-repeat center/contain;
+}
+
+.kitchen__table--long {
+    position: absolute;
+    width: 293.79px;
+    height: 42.33px;
+    background: url('../layout/table-long.svg') no-repeat center/contain;
+}
+
+/* Scene */
+.scene-container {
+    position: absolute;
+    width: 131px;
+    height: 458px;
+    left: 1px;
+    top: 82px;
+}
+
+.scene-body {
+    width: 129.63px;
+    height: 456.5px;
+    background: url('../layout/scene-body.svg') no-repeat center/contain;
+}
+
+/* DJ */
+.DJ-container {
+    position: absolute;
+    width: 99px;
+    height: 58.54px;
+    left: 755px;
+    top: 0;
+}
+
+.DJ-body {
+    width: 97.06px;
+    height: 58.02px;
+    background: #EF6565;
+    border: 1px solid #000000;
+}
+
+/* ===== TABLES ===== */
 .table-group {
     position: absolute;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s ease;
 }
 
 .table-group:hover {
     transform: scale(1.05);
-    z-index: 50;
+    z-index: 10;
 }
 
-/* Table body */
+.table {
+    position: relative;
+}
+
 .table__body {
-    box-sizing: border-box;
     position: absolute;
+    border: 1px solid #000000;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #000000;
 }
 
-/* Table statuses */
 .table__body--free {
     background: #016802 !important;
 }
@@ -771,65 +621,25 @@ body {
     background: #AA00FF !important;
 }
 
-/* Table number */
 .table__number {
     position: absolute;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
     font-size: 14px;
-    line-height: 17px;
-    display: flex;
-    align-items: center;
-    text-align: center;
     color: #FFFFFF;
+    font-weight: 500;
     z-index: 2;
+    pointer-events: none;
 }
 
-/* Chairs */
 .table__chair {
     position: absolute;
     width: 25px;
     height: 25px;
-    background: #8B7355;
-    border-radius: 4px;
-    border: 1px solid #5A4A3A;
+    background: url('../layout/table-chair.svg') no-repeat center/contain;
 }
 
-/* Sofas */
 .table__sofa {
     position: absolute;
-    background: #6B5B4F;
-    border-radius: 4px;
-    border: 1px solid #4A3A2F;
-}
-
-/* Bar */
-.bar-container {
-    position: absolute;
-    width: 199px;
-    height: 124.46px;
-    left: 75px;
-    top: 0;
-}
-
-.bar {
-    position: absolute;
-    width: 199px;
-    height: 97px;
-    left: 0;
-    top: 0;
-    background: #5A4A3A;
-    border-radius: 4px;
-}
-
-.bar__chair {
-    position: absolute;
-    width: 30px;
-    height: 33px;
-    background: #8B7355;
-    border-radius: 4px 4px 0 0;
-    border: 1px solid #5A4A3A;
+    background: url('../layout/table-sofa.svg') no-repeat center/contain;
 }
 
 /* Fireplace */
@@ -842,14 +652,10 @@ body {
 }
 
 .fireplace-body {
-    box-sizing: border-box;
-    position: absolute;
     width: 128px;
     height: 38px;
-    left: 0;
-    top: 0;
-    opacity: 0.3;
     border: 5px solid #000000;
+    opacity: 0.3;
 }
 
 .fireplace-label {
@@ -858,11 +664,7 @@ body {
     height: 26px;
     left: 40px;
     top: 10px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
     font-size: 15px;
-    line-height: 18px;
     color: #1A1A1A;
 }
 
@@ -876,12 +678,8 @@ body {
 }
 
 .piano-body {
-    box-sizing: border-box;
-    position: absolute;
     width: 63.24px;
     height: 40.05px;
-    left: 0;
-    top: 0;
     background: #EF6565;
     border: 1px solid #000000;
     transform: rotate(-27.93deg);
@@ -893,158 +691,26 @@ body {
     height: 41px;
     left: 21px;
     top: 25px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
     font-size: 12px;
-    line-height: 15px;
     color: #000000;
 }
 
-/* DJ */
-.DJ-container {
+/* Doors */
+.door {
     position: absolute;
-    width: 99px;
-    height: 58.54px;
-    left: 755px;
-    top: 0;
+    width: 38px;
+    height: 31px;
+    background: url('../layout/dishwasher-door.svg') no-repeat center/contain;
 }
 
-.DJ-body {
-    box-sizing: border-box;
-    position: absolute;
-    width: 97.06px;
-    height: 58.02px;
-    left: 0;
-    top: 0;
-    background: #EF6565;
-    border: 1px solid #000000;
-    transform: rotate(0.31deg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.DJ-label {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #FFFFFF;
-}
-
-/* Scene */
-.scene-container {
-    position: absolute;
-    width: 131px;
-    height: 458px;
-    left: 1px;
-    top: 82px;
-}
-
-.scene-border-line {
-    position: absolute;
-    width: 458px;
-    height: 0;
-    left: 131px;
-    top: 0;
-    border: 1px solid #FFFFFF;
-    transform: rotate(-90deg);
-}
-
-.scene-body {
-    position: absolute;
-    width: 129.63px;
-    height: 456.5px;
-    left: 0;
-    top: 0.89px;
-    background: #5A4A3A;
-    transform: rotate(-179.95deg);
-}
-
-.scene-label {
-    position: absolute;
-    width: 84px;
-    height: 44px;
-    left: 30px;
-    top: 214px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #FFFFFF;
-}
-
-/* Second floor indicator */
-.second-floor-text {
-    position: absolute;
-    width: 185px;
-    height: 33px;
-    left: 255px;
-    top: 1036px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #FFFFFF;
-}
-
-.second-floor-container {
-    position: absolute;
-    width: 145px;
-    height: 82px;
-    left: 0;
-    top: 0;
-}
-
-.second-floor-line--right {
-    position: absolute;
-    width: 82px;
-    height: 0;
-    left: 145px;
-    top: 0;
-    border: 1px solid #FFFFFF;
-    transform: rotate(-90deg);
-}
-
-.second-floor-line--bottom {
-    position: absolute;
-    width: 145px;
-    height: 0;
-    left: 0;
-    top: 81px;
-    border: 1px solid #FFFFFF;
-    transform: rotate(180deg);
-}
-
-.stairs-label {
-    position: absolute;
-    width: 120px;
-    height: 29px;
-    left: 22px;
-    top: 31px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #000000;
-}
-
-/* ============================================
-   PROMPT / LEGEND
-   ============================================ */
-
+/* ===== PROMPT / LEGEND ===== */
 .prompt {
     position: absolute;
     width: 225px;
     height: 113px;
-    left: 1605px;
-    top: 942px;
-    z-index: 80;
+    right: 20px;
+    bottom: 20px;
+    z-index: 50;
 }
 
 .prompt-green,
@@ -1053,428 +719,121 @@ body {
     position: absolute;
     width: 30px;
     height: 28px;
-    left: 0;
     border-radius: 5px;
 }
 
-.prompt-green { top: 78px; background: #0DC500; }
-.prompt--red { top: 39px; background: #FF0000; }
-.prompt--pirple { top: 0; background: #AA00FF; }
+.prompt-green {
+    background: #0DC500;
+    top: 78px;
+}
 
-.prompt-text {
+.prompt--red {
+    background: #FF0000;
+    top: 39px;
+}
+
+.prompt--pirple {
+    background: #AA00FF;
+    top: 0;
+}
+
+.prompt span {
     position: absolute;
-    width: 175px;
-    height: 28px;
     left: 45px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
     font-size: 16px;
-    line-height: 19px;
     color: #FFFFFF;
+    line-height: 28px;
 }
 
-.prompt-text--free { top: 85px; }
-.prompt-text--busy { top: 45px; }
-.prompt-text--reserved { top: 5px; left: 50px; }
-
-/* ============================================
-   DOORS
-   ============================================ */
-
-.door {
-    position: absolute;
-    width: 38px;
-    height: 31px;
-    background: #6B5B4F;
-    border: 1px solid #4A3A2F;
-    border-radius: 2px;
-}
-
-/* ============================================
-   POPUP WINDOWS
-   ============================================ */
-
+/* ===== POPUPS ===== */
 .popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    display: none;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
 .popup-overlay.active {
-    display: flex;
+    opacity: 1;
+    pointer-events: auto;
 }
 
-/* Information popup */
-.information-popup-window {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 0px 22px;
-    gap: 23px;
-    width: 491px;
-    height: 527px;
-    background: #494949;
-    border-radius: 10px;
-    position: relative;
-}
-
-.popup-title {
-    width: 298px;
-    height: 37px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 24px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #FFFFFF;
-}
-
-.information-block {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    gap: 10px;
+.popup-content {
+    background: #4D4D4D;
     border-radius: 20px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 24px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #FFFFFF;
-}
-
-.information-block1 {
-    width: 462px;
-    height: 236px;
-    background: #262626;
-}
-
-.information-block2 {
-    width: 463px;
-    height: 44px;
-    background: #2F2D2D;
-}
-
-.information-block3 {
-    width: 451px;
-    height: 44px;
-    background: #3A3939;
-}
-
-.information-block4 {
-    width: 451px;
-    height: 44px;
-    background: #424242;
-}
-
-/* Personal popup */
-.personal-popup-window {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 55px 0px 38px;
-    gap: 10px;
-    width: 571px;
-    height: 741px;
-    background: #4F4F4F;
-    border-radius: 10px;
-    position: relative;
-}
-
-.personal__container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0;
-    gap: 29px;
-    width: 571px;
-    height: 648px;
-}
-
-.personal__block {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 16px 376px 75px 29px;
-    gap: 10px;
-    width: 571px;
-    background: #716F6F;
-}
-
-.personal__button {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    gap: 10px;
-    background: #4D4D4D;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.personal__button:hover {
-    background: #5D5D5D;
-}
-
-.personal__button-text {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #FFFFFF;
-}
-
-/* Analytics popup */
-.analytics-popup-window {
-    width: 563px;
-    height: 759px;
-    background: #4D4D4D;
-    border-radius: 10px;
-    position: relative;
-    padding: 20px;
-}
-
-.analytics-title {
-    position: absolute;
-    width: 177px;
-    height: 80px;
-    left: 203px;
-    top: 207px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #FFFFFF;
-}
-
-.analytics-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    gap: 23px;
-    position: absolute;
-    width: 503px;
-    height: 436px;
-    left: 30px;
-    top: 287px;
-    background: #727272;
-    border-radius: 10px;
-}
-
-.analytics__button {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    gap: 10px;
-    background: #4D4D4D;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.analytics__button:hover {
-    background: #5D5D5D;
-}
-
-.analytics__button-text {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #FFFFFF;
-    text-align: center;
-}
-
-/* Reserve popup */
-.reserve-popup-window {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 66px 53px 188px;
-    gap: 10px;
-    width: 402px;
-    height: 488px;
-    background: #4D4D4D;
-    border-radius: 10px;
-    position: relative;
-}
-
-.reserve-list-block {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    gap: 10px;
-    width: 296px;
-    height: 234px;
-    background: #323232;
-    border-radius: 10px;
-}
-
-.reserve-text {
-    width: 276px;
-    height: 190px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 19px;
-    color: #FFFFFF;
+    padding: 30px;
+    max-width: 600px;
+    max-height: 80vh;
     overflow-y: auto;
-}
-
-/* Status popup */
-.status-popup-window {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 16px 0;
-    gap: 4px;
-    isolation: isolate;
-    width: 280px;
-    height: 343px;
-    background: #4F4F4F;
-    border-radius: 10px;
     position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
 }
 
-.status-popup-title {
-    width: 118px;
-    height: 50px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #FFFFFF;
-    padding: 0 20px;
+.popup-overlay.active .popup-content {
+    transform: scale(1);
 }
 
-.status__inside-container {
-    width: 280px;
-    height: 165px;
-    background: #716F6F;
-}
-
-.status__description {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    gap: 10px;
+.popup-close {
     position: absolute;
-    width: 180px;
-    height: 128px;
-    left: 53px;
-    top: 89px;
-    background: #4D4D4D;
-    border-radius: 8px;
-}
-
-.status__description-text {
-    width: 160px;
-    height: 108px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 27px;
-    color: #FFFFFF;
-}
-
-/* Description window (table tooltip) */
-.description-window {
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    background: #FF4444;
+    border-radius: 50%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding: 10px;
-    gap: 10px;
-    width: 184px;
-    height: 238px;
-    background: rgba(152, 205, 48, 0.8);
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+}
+
+.popup-close:hover {
+    background: #FF6666;
+}
+
+/* Tooltip */
+#table-tooltip {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 12px 16px;
     border-radius: 10px;
-    position: absolute;
-    z-index: 200;
-    display: none;
+    font-size: 14px;
+    z-index: 500;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
 }
 
-.description-window.active {
-    display: flex;
+#table-tooltip.active {
+    opacity: 1;
 }
 
-.description-text {
-    width: 164px;
-    height: 192px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 22px;
-    line-height: 24px;
-    display: flex;
-    align-items: center;
-    letter-spacing: 0.03em;
-    color: #454545;
-}
-
-/* ============================================
-   RESPONSIVE SCALING
-   ============================================ */
-
-@media (max-width: 1920px) {
-    .restaurant-map {
-        transform-origin: top left;
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1400px) {
+    .statistics-container {
+        left: 300px;
+        transform: scale(0.85);
     }
 }
 
-/* ============================================
-   SCROLLBAR STYLING
-   ============================================ */
-
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #3F3F3F;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #5A5A5A;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #6A6A6A;
+@media (max-width: 1200px) {
+    .statistics-container {
+        left: 260px;
+        transform: scale(0.75);
+    }
 }

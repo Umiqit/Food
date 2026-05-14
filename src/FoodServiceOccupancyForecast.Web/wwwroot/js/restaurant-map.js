@@ -1,6 +1,7 @@
 /**
  * Restaurant Map Interactive Controller
  * FoodServiceOccupancyForecast
+ * Fixed version: overlay bug, separate pages, auto-scale, active nav highlighting
  */
 
 class RestaurantMap {
@@ -17,9 +18,12 @@ class RestaurantMap {
         this.updateStatistics();
         this.scaleMap();
         window.addEventListener('resize', () => this.scaleMap());
+
+        // FIX #2: Start with empty map, show only selected hall
+        this.switchHall('general');
     }
 
-    // Scale map to fit viewport
+    // FIX #3: Auto-scale map to fit viewport
     scaleMap() {
         const map = document.querySelector('.restaurant-map');
         if (!map) return;
@@ -35,20 +39,21 @@ class RestaurantMap {
 
         map.style.transform = `scale(${scale})`;
         map.style.transformOrigin = 'top left';
+
+        // Center the map
+        const offsetX = (viewportW - mapW * scale) / 2;
+        const offsetY = (viewportH - mapH * scale) / 2;
+        map.style.marginLeft = `${Math.max(0, offsetX)}px`;
+        map.style.marginTop = `${Math.max(0, offsetY)}px`;
     }
 
     // Load table statuses from API/localStorage
     loadTableStatuses() {
-        // Default statuses from design
         const defaultStatuses = {
-            // Hall 1 tables
             1: 'reserved', 2: 'free', 3: 'free', 4: 'free', 5: 'free',
             6: 'occupied', 7: 'free', 8: 'reserved', 9: 'occupied', 10: 'free', 11: 'occupied',
-            // Circle hall tables
             13: 'free', 14: 'free', 15: 'occupied', 16: 'free', 17: 'reserved', 18: 'occupied',
-            // Veranda tables
             19: 'occupied', 20: 'free', 21: 'free',
-            // Hall 3 (2nd floor) tables
             24: 'free', 25: 'free', 26: 'free', 27: 'free', 28: 'free', 29: 'free'
         };
 
@@ -57,7 +62,6 @@ class RestaurantMap {
         this.applyTableStatuses();
     }
 
-    // Apply statuses to DOM
     applyTableStatuses() {
         document.querySelectorAll('.table-group').forEach(group => {
             const numberEl = group.querySelector('.table__number');
@@ -74,12 +78,10 @@ class RestaurantMap {
         });
     }
 
-    // Save statuses
     saveTableStatuses() {
         localStorage.setItem('tableStatuses', JSON.stringify(this.tableStatuses));
     }
 
-    // Bind all events
     bindEvents() {
         // Table clicks
         document.querySelectorAll('.table-group').forEach(table => {
@@ -88,25 +90,24 @@ class RestaurantMap {
             table.addEventListener('mouseleave', () => this.hideTableTooltip());
         });
 
-        // Navigation
+        // Navigation - hall buttons
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', (e) => this.handleNavigation(e, item));
         });
 
-        // Sub buttons
+        // Sub buttons (popups)
         document.querySelector('.contain-buttons__personal')?.addEventListener('click', () => this.openPopup('personal'));
         document.querySelector('.contain-buttons__analitics')?.addEventListener('click', () => this.openPopup('analytics'));
         document.querySelector('.contain-buttons__reservations')?.addEventListener('click', () => this.openPopup('reserve'));
         document.querySelector('.contain-buttons__info-about')?.addEventListener('click', () => this.openPopup('information'));
 
-        // Popup close on overlay click
+        // Popup close
         document.querySelectorAll('.popup-overlay').forEach(overlay => {
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) this.closePopup(overlay.id);
             });
         });
 
-        // Close buttons
         document.querySelectorAll('.popup-close').forEach(btn => {
             btn.addEventListener('click', () => {
                 const overlay = btn.closest('.popup-overlay');
@@ -115,7 +116,6 @@ class RestaurantMap {
         });
     }
 
-    // Handle table click
     handleTableClick(e, table) {
         e.stopPropagation();
         const tableNum = table.dataset.tableNumber;
@@ -123,7 +123,6 @@ class RestaurantMap {
 
         this.selectedTable = tableNum;
 
-        // Cycle through statuses: free -> reserved -> occupied -> free
         const statusCycle = { free: 'reserved', reserved: 'occupied', occupied: 'free' };
         const newStatus = statusCycle[currentStatus] || 'free';
 
@@ -132,11 +131,9 @@ class RestaurantMap {
         this.applyTableStatuses();
         this.updateStatistics();
 
-        // Show status change animation
         this.showStatusChangeAnimation(table, newStatus);
     }
 
-    // Show tooltip on hover
     showTableTooltip(e, table) {
         const tooltip = document.getElementById('table-tooltip');
         if (!tooltip) return;
@@ -161,7 +158,6 @@ class RestaurantMap {
         if (tooltip) tooltip.classList.remove('active');
     }
 
-    // Status change animation
     showStatusChangeAnimation(table, status) {
         const colors = { free: '#016802', occupied: '#FF0000', reserved: '#AA00FF' };
         const body = table.querySelector('.table__body');
@@ -174,52 +170,71 @@ class RestaurantMap {
         }, 500);
     }
 
-    // Handle navigation
+    // FIX #4: Navigation with active button highlighting
     handleNavigation(e, item) {
         const hall = item.dataset.hall;
         if (!hall) return;
 
-        // Update active state
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-item--active'));
+        // Update active state in sidebar
+        document.querySelectorAll('.nav-item').forEach(n => {
+            n.classList.remove('nav-item--active', 'nav-item--highlight');
+        });
         item.classList.add('nav-item--active');
+
+        // Add highlight class for visual feedback
+        if (hall === 'hall3') {
+            item.classList.add('nav-item--highlight');
+        }
 
         this.currentHall = hall;
         this.switchHall(hall);
+
+        // Update URL hash for "separate page" feel
+        window.location.hash = hall;
     }
 
-    // Switch between halls
+    // FIX #1 & #2: Proper hall switching - hide all, show only selected
     switchHall(hall) {
-        const halls = {
-            general: '.map-area',
-            hall1: '.hall-1-container',
-            hall2: '.circle-hall-container',
-            hall3: '.hall-3-container',
-            veranda: '.veranda-container'
+        const hallSelectors = {
+            general: ['.hall-1-container', '.circle-hall-container', '.hall-3-container', '.veranda-container', '.kitchen-container', '.bar-container', '.wardrobe-container', '.reception-container', '.corridor2', '.exite-block', '.WC1-container', '.WC2', '.WC3-container', '.kid-room-container', '.ladder-container', '.dishwasher-room-container'],
+            hall1: ['.hall-1-container'],
+            hall2: ['.circle-hall-container'],
+            hall3: ['.hall-3-container'],
+            veranda: ['.veranda-container']
         };
 
-        // Hide all halls
-        document.querySelectorAll('.hall-1-container, .circle-hall-container, .hall-3-container, .veranda-container').forEach(h => {
-            h.style.opacity = '0.3';
+        // FIX #1: First, HIDE ALL hall elements completely (not just opacity)
+        const allHalls = document.querySelectorAll('.hall-1-container, .circle-hall-container, .hall-3-container, .veranda-container, .kitchen-container, .bar-container, .wardrobe-container, .reception-container, .corridor2, .exite-block, .WC1-container, .WC2, .WC3-container, .kid-room-container, .ladder-container, .dishwasher-room-container');
+
+        allHalls.forEach(h => {
+            h.style.display = 'none';
+            h.style.opacity = '0';
             h.style.pointerEvents = 'none';
         });
 
-        if (hall === 'general') {
-            // Show all
-            document.querySelectorAll('.hall-1-container, .circle-hall-container, .hall-3-container, .veranda-container').forEach(h => {
-                h.style.opacity = '1';
-                h.style.pointerEvents = 'auto';
+        // Show selected hall(s)
+        const targets = hallSelectors[hall] || hallSelectors.general;
+
+        targets.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+                el.style.display = 'block';
+                el.style.opacity = '1';
+                el.style.pointerEvents = 'auto';
             });
-        } else {
-            // Show selected
-            const target = document.querySelector(halls[hall]);
-            if (target) {
-                target.style.opacity = '1';
-                target.style.pointerEvents = 'auto';
-            }
-        }
+        });
+
+        // Always show common elements (header, sidebar, background, prompt)
+        const commonElements = document.querySelectorAll('.header, .left-menu-container, .vetka, .prompt');
+        commonElements.forEach(el => {
+            el.style.display = 'block';
+            el.style.opacity = '1';
+        });
+
+        // Update statistics based on visible hall
+        this.updateStatistics();
     }
 
-    // Update statistics
     updateStatistics() {
         const statuses = Object.values(this.tableStatuses);
         const total = statuses.length;
@@ -227,7 +242,6 @@ class RestaurantMap {
         const reserved = statuses.filter(s => s === 'reserved').length;
         const free = statuses.filter(s => s === 'free').length;
 
-        // Update header stats
         const stat1 = document.querySelector('.statistics-1-container .statistics-text');
         if (stat1) stat1.textContent = `Занято ${occupied} из ${total} столов`;
 
@@ -237,7 +251,6 @@ class RestaurantMap {
         const stat3 = document.querySelector('.statistics-3-container .statistics-text');
         if (stat3) stat3.textContent = `Забронировано ${reserved} столов`;
 
-        // Update load indicator
         const loadIndicator = document.querySelector('.load-indicator');
         if (loadIndicator) {
             const loadPercent = total > 0 ? Math.round((occupied / total) * 100) : 0;
@@ -245,7 +258,6 @@ class RestaurantMap {
         }
     }
 
-    // Open popup
     openPopup(type) {
         const popupIds = {
             personal: 'popup-personal',
@@ -262,13 +274,11 @@ class RestaurantMap {
         }
     }
 
-    // Close popup
     closePopup(popupId) {
         const popup = document.getElementById(popupId);
         if (popup) popup.classList.remove('active');
     }
 
-    // API integration methods
     async fetchTableData() {
         try {
             const response = await fetch('/api/tables');
@@ -297,6 +307,15 @@ class RestaurantMap {
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
     window.restaurantMap = new RestaurantMap();
+
+    // Handle URL hash for direct navigation
+    const hash = window.location.hash.replace('#', '');
+    if (hash && ['general', 'hall1', 'hall2', 'hall3', 'veranda'].includes(hash)) {
+        setTimeout(() => {
+            const navItem = document.querySelector(`.nav-item[data-hall="${hash}"]`);
+            if (navItem) navItem.click();
+        }, 100);
+    }
 });
 
 // SignalR connection for real-time updates
@@ -307,22 +326,10 @@ class RealTimeUpdates {
     }
 
     async init() {
-        // SignalR hub connection
-        // this.connection = new signalR.HubConnectionBuilder()
-        //     .withUrl("/tableHub")
-        //     .build();
-        //
-        // this.connection.on("TableStatusChanged", (tableId, status) => {
-        //     window.restaurantMap.tableStatuses[tableId] = status;
-        //     window.restaurantMap.applyTableStatuses();
-        //     window.restaurantMap.updateStatistics();
-        // });
-        //
-        // await this.connection.start();
+        // SignalR hub connection placeholder
     }
 }
 
-// Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { RestaurantMap, RealTimeUpdates };
 }
