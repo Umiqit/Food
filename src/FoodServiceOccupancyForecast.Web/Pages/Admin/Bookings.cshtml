@@ -1,5 +1,6 @@
 @page
 @model FoodServiceOccupancyForecast.Web.Pages.Admin.BookingsModel
+@using FoodServiceOccupancyForecast.Core.Enums
 @{
     ViewData["Title"] = "Бронирования";
     Layout = "_AdminLayout";
@@ -51,17 +52,17 @@
         <tbody id="bookings-body">
             @foreach (var booking in Model.Bookings)
             {
-                <tr data-status="@booking.Status" data-date="@booking.BookingDate.ToString("yyyy-MM-dd")">
+                <tr data-status="@booking.Status" data-date="@booking.BookingTime.ToString("yyyy-MM-dd")">
                     <td>#@booking.Id</td>
                     <td>Стол @booking.TableId</td>
                     <td>@booking.CustomerName</td>
                     <td>@booking.CustomerPhone</td>
-                    <td>@booking.BookingDate.ToString("dd.MM.yyyy")</td>
-                    <td>@booking.StartTime.ToString("hh\\:mm") - @booking.EndTime.ToString("hh\\:mm")</td>
+                    <td>@booking.BookingTime.ToString("dd.MM.yyyy")</td>
+                    <td>@booking.BookingTime.ToString("HH:mm")</td>
                     <td>@booking.GuestsCount</td>
                     <td><span class="status-badge status-@booking.Status.ToString().ToLower()">@booking.Status</span></td>
                     <td>
-                        @if (booking.Status == FoodServiceOccupancyForecast.Core.Enums.BookingStatus.Pending)
+                        @if (booking.Status == BookingStatus.Pending)
                         {
                             <button class="btn-small btn-success" onclick="confirmBooking(@booking.Id)">✓</button>
                         }

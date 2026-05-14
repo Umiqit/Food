@@ -30,12 +30,12 @@
             {
                 <div class="admin-table table-@table.Shape table-@table.Status.ToString().ToLower()"
                      data-id="@table.Id"
-                     data-hall="@table.HallName"
+                     data-hall="@table.HallId"
                      data-status="@table.Status"
                      style="left: @(table.PositionX)px; top: @(table.PositionY)px;"
                      draggable="true">
                     <span class="table-number">@table.Id</span>
-                    <span class="table-seats">@table.Seats мест</span>
+                    <span class="table-seats">@table.Capacity мест</span>
                     <div class="table-actions">
                         <button class="btn-action" onclick="setStatus(@table.Id, 'Free')">✓ Свободен</button>
                         <button class="btn-action" onclick="setStatus(@table.Id, 'Occupied')">👤 Занят</button>
@@ -62,15 +62,15 @@
             <tbody id="tables-list-body">
                 @foreach (var table in Model.Tables)
                 {
-                    <tr data-hall="@table.HallName" data-status="@table.Status">
+                    <tr data-hall="@table.HallId" data-status="@table.Status">
                         <td>@table.Id</td>
-                        <td>@table.HallName</td>
-                        <td>@table.Seats</td>
+                        <td>Зал #@table.HallId</td>
+                        <td>@table.Capacity</td>
                         <td><span class="status-badge status-@table.Status.ToString().ToLower()">@table.Status</span></td>
                         <td>@table.CurrentGuests</td>
                         <td>
-                            <button class="btn-small" onclick="editTable(@table.Id)">✏️</button>
-                            <button class="btn-small btn-danger" onclick="deleteTable(@table.Id)">🗑️</button>
+                            <button class="btn-small" onclick="editTable(@table.Id)">✎</button>
+                            <button class="btn-small btn-danger" onclick="deleteTable(@table.Id)">🗑</button>
                         </td>
                     </tr>
                 }
@@ -205,9 +205,7 @@
                 customerName: document.getElementById('customer-name').value,
                 customerPhone: document.getElementById('customer-phone').value,
                 guestsCount: parseInt(document.getElementById('guests-count').value),
-                bookingDate: document.getElementById('booking-date').value,
-                startTime: document.getElementById('booking-time').value,
-                endTime: document.getElementById('booking-time').value,
+                bookingTime: document.getElementById('booking-date').value + 'T' + document.getElementById('booking-time').value,
                 notes: document.getElementById('booking-notes').value
             };
 

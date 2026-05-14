@@ -5,8 +5,8 @@ namespace FoodServiceOccupancyForecast.Infrastructure.Repositories;
 
 public interface IRepository<T> where T : class
 {
+    Task<IEnumerable<T>> GetAllAsync();
     Task<T?> GetByIdAsync(int id);
-    Task<List<T>> GetAllAsync();
     Task AddAsync(T entity);
     Task UpdateAsync(T entity);
     Task DeleteAsync(T entity);
@@ -29,7 +29,7 @@ public class Repository<T> : IRepository<T> where T : class
         return await _dbSet.FindAsync(id);
     }
 
-    public virtual async Task<List<T>> GetAllAsync()
+    public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
         return await _dbSet.ToListAsync();
     }

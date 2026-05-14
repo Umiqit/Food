@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using FoodServiceOccupancyForecast.Core.Entities;
 using FoodServiceOccupancyForecast.Core.Enums;
-using FoodServiceOccupancyForecast.Core.Services;
 using FoodServiceOccupancyForecast.Web.Hubs;
+using FoodServiceOccupancyForecast.Web.Services;
 
 namespace FoodServiceOccupancyForecast.Web.Controllers.Api
 {

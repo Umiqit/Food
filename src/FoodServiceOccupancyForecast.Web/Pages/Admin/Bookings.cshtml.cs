@@ -24,6 +24,6 @@ public class BookingsModel : PageModel
         Bookings = (await _bookingRepository.GetAllAsync()).ToList();
         PendingCount = Bookings.Count(b => b.Status == BookingStatus.Pending);
         ConfirmedCount = Bookings.Count(b => b.Status == BookingStatus.Confirmed);
-        TodayCount = Bookings.Count(b => b.BookingDate.Date == DateTime.UtcNow.Date);
+        TodayCount = Bookings.Count(b => b.BookingTime.Date == DateTime.UtcNow.Date);
     }
 }

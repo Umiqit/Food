@@ -48,11 +48,11 @@
             {
                 <div class="client-table table-@table.Shape table-@table.Status.ToString().ToLower()"
                      data-id="@table.Id"
-                     data-seats="@table.Seats"
+                     data-seats="@table.Capacity"
                      data-status="@table.Status"
                      style="left: @(table.PositionX)px; top: @(table.PositionY)px;">
                     <span class="table-number">@table.Id</span>
-                    <span class="table-seats">@table.Seats мест</span>
+                    <span class="table-seats">@table.Capacity мест</span>
                 </div>
             }
         </div>

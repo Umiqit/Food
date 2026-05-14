@@ -10,6 +10,7 @@ namespace FoodServiceOccupancyForecast.Infrastructure.Data
         public DbSet<Table> Tables { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Visitor> Visitors { get; set; }
+        public DbSet<Hall> Halls { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +22,14 @@ namespace FoodServiceOccupancyForecast.Infrastructure.Data
 
             modelBuilder.Entity<Booking>().HasKey(b => b.Id);
             modelBuilder.Entity<Booking>().Property(b => b.Status).HasConversion<string>();
+
+            // Seed data for halls
+            modelBuilder.Entity<Hall>().HasData(
+                new Hall { Id = 1, Name = "Main hall", Description = "Main dining hall", Capacity = 11 },
+                new Hall { Id = 2, Name = "Circle Hall", Description = "Circle shaped hall", Capacity = 6 },
+                new Hall { Id = 3, Name = "2nd floor", Description = "Second floor hall", Capacity = 6 },
+                new Hall { Id = 4, Name = "Veranda", Description = "Outdoor veranda", Capacity = 3 }
+            );
 
             // Seed data for restaurant map
             modelBuilder.Entity<Table>().HasData(

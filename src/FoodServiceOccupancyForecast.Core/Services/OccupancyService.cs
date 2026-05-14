@@ -21,7 +21,7 @@ public class OccupancyService : IOccupancyService
         var reserved = tables.Count(t => t.Status == Enums.TableStatus.Reserved);
         var free = tables.Count(t => t.Status == Enums.TableStatus.Free);
         var total = tables.Count();
-        var guests = tables.Sum(t => t.CurrentGuests);
+        var guests = tables.Sum(t => t.CurrentGuests ?? 0);
 
         return new OccupancySnapshot
         {

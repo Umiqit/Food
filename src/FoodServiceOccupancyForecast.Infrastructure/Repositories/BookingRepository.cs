@@ -19,7 +19,7 @@ namespace FoodServiceOccupancyForecast.Infrastructure.Repositories
             _context = context;
         }
 
-        // === IRepository<Booking> ===
+        // === IRepository ===
         public async Task<IEnumerable<Booking>> GetAllAsync()
         {
             return await _context.Bookings.ToListAsync();
@@ -67,8 +67,8 @@ namespace FoodServiceOccupancyForecast.Infrastructure.Repositories
         {
             return await _context.Bookings
                 .Where(b => b.TableId == tableId
-                         && b.BookingTime.Date == time.Date
-                         && b.BookingTime.Hour == time.Hour)
+                && b.BookingTime.Date == time.Date
+                && b.BookingTime.Hour == time.Hour)
                 .ToListAsync();
         }
 

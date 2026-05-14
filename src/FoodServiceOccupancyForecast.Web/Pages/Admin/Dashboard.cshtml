@@ -65,8 +65,8 @@
                 <tr>
                     <td>Стол @booking.TableId</td>
                     <td>@booking.CustomerName</td>
-                    <td>@booking.BookingDate.ToString("dd.MM.yyyy")</td>
-                    <td>@booking.StartTime.ToString("hh\\:mm") - @booking.EndTime.ToString("hh\\:mm")</td>
+                    <td>@booking.BookingTime.ToString("dd.MM.yyyy")</td>
+                    <td>@booking.BookingTime.ToString("HH:mm")</td>
                     <td>@booking.GuestsCount</td>
                     <td><span class="status-badge status-@booking.Status.ToString().ToLower()">@booking.Status</span></td>
                 </tr>

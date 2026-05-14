@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FoodServiceOccupancyForecast.Core.Entities;
+using FoodServiceOccupancyForecast.Core.Enums;
 using FoodServiceOccupancyForecast.Core.Interfaces;
 
 namespace FoodServiceOccupancyForecast.Core.Services
